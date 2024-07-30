@@ -9,6 +9,12 @@ import Sectionhead from "@components/sectionhead.astro";
 const publishedTeamMembers = await getCollection("team", ({ data }) => {
   return !data.draft && data.publishDate < new Date();
 });
+
+// Sort team members by publish date (newest first)
+const sortedTeamMembers = publishedTeamMembers.sort((a, b) => {
+  return new Date(b.data.publishDate) - new Date(a.data.publishDate);
+});
+
 ---
 
 <Layout title="About">
@@ -20,18 +26,17 @@ const publishedTeamMembers = await getCollection("team", ({ data }) => {
 
     <div class="flex flex-col gap-3 mx-auto max-w-4xl mt-16">
       <h2 class="font-bold text-3xl text-gray-800">
-        Empowering the world with Astro.
+        Empowering the World with Innovation
       </h2>
       <p class="text-lg leading-relaxed text-slate-500">
-        We're a multi-cultural team from around the world! We come from diverse
-        backgrounds, bringing different personalities, experiences and skills to
-        the job. This is what makes our team so special.
+        At Nunmi.ai, we are a dedicated team of professionals united by our passion for technology and innovation. Our collective skills and experiences enable us to deliver high-quality solutions that drive success for our clients. Together, we are committed to excellence in every project we undertake.
       </p>
     </div>
+    
     <div class="grid md:grid-cols-3 gap-10 mx-auto max-w-4xl mt-12">
       {
-        publishedTeamMembers.map((teamMemberEntry) => (
-          <div class="group">
+        sortedTeamMembers.map((teamMemberEntry) => (
+          <div class="group" key={teamMemberEntry.id}> {/* Add a unique key prop here */}
             <div class="w-full aspect-square">
               <Picture
                 src={teamMemberEntry.data.avatar.src}
@@ -39,7 +44,7 @@ const publishedTeamMembers = await getCollection("team", ({ data }) => {
                 sizes="(max-width: 800px) 100vw, 400px"
                 width={400}
                 height={400}
-                class="w-full rounded-md rounded transition group-hover:-translate-y-1 group-hover:shadow-xl bg-white object-cover object-center aspect-square"
+                class="w-full rounded-md transition group-hover:-translate-y-1 group-hover:shadow-xl bg-white object-cover object-center aspect-square"
               />
             </div>
 
