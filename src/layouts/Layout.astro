@@ -19,7 +19,7 @@ const resolvedImageWithDomain = new URL(
 const { title } = Astro.props;
 
 const makeTitle = title
-  ? title + " | " + "Nunmi.ai"
+  ? title + " | " + "NuNmi.ai"
   : "Empowering Your Skills in AI and Engineering";
 
 ---
@@ -34,7 +34,7 @@ const makeTitle = title
 
     <SEO
       title={makeTitle}
-      description="Nunmi.ai offers expert consulting and courses in machine learning and engineering."
+      description="NuNmi.ai offers expert consulting and courses in machine learning and engineering."
       canonical={canonicalURL}
       twitter={{
         creator: "@nunmi_ai",
@@ -45,11 +45,11 @@ const makeTitle = title
         basic: {
           url: canonicalURL,
           type: "website",
-          title: `Nunmi.ai - Empowering Your Skills`,
+          title: `NuNmi.ai - Empowering Your Skills`,
           image: resolvedImageWithDomain,
         },
         image: {
-          alt: "Nunmi.ai Homepage Screenshot",
+          alt: "NuNmi.ai Homepage Screenshot",
         },
       }}
     />
