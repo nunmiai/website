@@ -1,37 +1,143 @@
 ---
 draft: false
-title: "The Complete Guide to Full Stack Web Development"
+title: "Chat with your documents using ChatGPT"
 snippet: "Ornare cum cursus laoreet sagittis nunc fusce posuere per euismod dis vehicula a, semper fames lacus maecenas dictumst pulvinar neque enim non potenti. Torquent hac sociosqu eleifend potenti."
 image: {
     src: "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?&fit=crop&w=430&h=240",
-    alt: "full stack web development"
+    alt: "RAG"
 }
-publishDate: "2022-11-08 11:39"
+publishDate: "2024-09-20 11:39"
 category: "Tutorials"
-author: "Janette Lynch"
-tags: [webdev, tailwindcss, frontend]
+author: "Adheeban"
+tags: [ChatGPT, OpenAI, RAG]
 ---
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit euismod rutrum, consequat fringilla ultricies nullam curae mollis semper conubia viverra, orci aenean dapibus pharetra nec tortor tellus cubilia. Ullamcorper mi lectus eu malesuada tempor massa praesent magna mattis posuere, lobortis vulputate ut duis magnis parturient habitant nibh id tristique, quis suspendisse donec nisl penatibus sem non feugiat taciti. Mollis per ridiculus integer cursus semper vestibulum fermentum penatibus cubilia blandit scelerisque, tempus platea leo posuere ac pharetra volutpat aliquet euismod id ullamcorper lobortis, urna est magna mus rhoncus massa curae libero praesent eget. Mattis malesuada vestibulum quis ac nam phasellus suscipit facilisis libero diam posuere, cursus massa vehicula neque imperdiet tincidunt dui egestas lacinia mollis aliquet orci, nisl curabitur dapibus litora dis cum nostra montes ligula praesent. Facilisi aliquam convallis molestie tempor blandit ultricies bibendum parturient cubilia quam, porttitor morbi torquent tempus taciti nec faucibus elementum phasellus, quis inceptos vestibulum gravida augue potenti eget nunc maecenas. Tempor facilisis ligula volutpat habitant consequat inceptos orci per potenti blandit platea, mus sapien eget vel libero vestibulum augue cubilia ut ultrices fringilla lectus, imperdiet pellentesque cum ridiculus convallis sollicitudin nisl interdum semper felis.
+Ever since [OpenAI](https://openai.com/) announced their language model [ChatGPT](https://openai.com/blog/chatgpt), it has been making headlines in the AI world on a daily basis. ChatGPT is being used as the foundation for countless new tools and applications, ranging from customer service chatbots to creative writing assistants. With its ability to generate high-quality, human-like responses to complex prompts, ChatGPT has quickly become a game-changing technology. 
 
-Ornare cum cursus laoreet sagittis nunc fusce posuere per euismod dis vehicula a, semper fames lacus maecenas dictumst pulvinar neque enim non potenti. Torquent hac sociosqu eleifend potenti augue nulla vivamus senectus odio, quisque curabitur enim consequat class sociis feugiat ullamcorper, felis dis imperdiet cubilia commodo sed massa phasellus. Viverra purus mus nisi condimentum dui vehicula facilisis turpis, habitant nascetur lectus tempor quisque habitasse urna scelerisque, nibh nullam vestibulum luctus aenean mollis metus. Suscipit gravida duis nec aliquet natoque molestie a ridiculus scelerisque cum, justo cursus sapien sodales purus dignissim vel facilisi magnis, inceptos rutrum ut integer auctor commodo sollicitudin fames et. Faucibus ligula nibh sagittis mauris auctor posuere habitant, scelerisque phasellus accumsan egestas gravida viverra nam, sed etiam eleifend proin massa dictumst. Porttitor risus luctus per aenean tellus primis fringilla vitae fames lacinia mauris metus, nec pulvinar quisque commodo sodales ac nibh natoque phasellus semper placerat. Lectus aenean potenti leo sollicitudin tristique eros quam ligula, vestibulum diam consequat enim torquent nec tempus, blandit viverra dapibus eleifend dis nunc nascetur.
+The applications of LLMs like ChatGPT are virtually limitless. Our imagination would be the only barrier. In this blog series though, We'll be focusing on how we can make ChatGPT, or any LLM for that matter to answer our queries with the context of the custom knowledge from the documents we feed to it. We'll start off with a simpler implementation using [Llama-index](https://github.com/jerryjliu/llama_index) that reads almost all types of basic document formats and returns the response to your queries based upon it. As we progress, we'll be using [Langchain](https://python.langchain.com/en/latest/index.html) to build a full fledged chatbot framework that reads the content from almost any link or document that you give to it and answers your queries accordingly. Langchain is a great framework for developing applications powered by language models. We'll be building a web app using these frameworks. Exciting times ahead !
 
-## Sodales hendrerit malesuada et vestibulum
+### Let me lay the **prerequisites** first:
+- You will need a working OpenAI key, because we'll be using the GPT-3 model underneath. If you don't have one, here's [how to get an OpenAI API Key](https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/)
+- You need to have python>=3.6 installed in your machine
 
-- Luctus euismod pretium nisi et, est dui enim.
+That's about everything you'd need. Rest of the things we'll take care of, as we sail through. Now without further ado, let's dive right in.
 
-- Curae eget inceptos malesuada, fermentum class.
+---
 
-- Porttitor vestibulum aliquam porta feugiat velit, potenti eu placerat.
+## Behold, the power of Llama-Index :llama:
 
-- Ligula lacus tempus ac porta, vel litora.
+As I said earlier, We are gonna use llama_index for this tutorial. We are not building anything fancy as of now. We'll not be building any UI. The sole purpose of this is to give an understanding of how llama_index works underneath. Below is the implementation using llama_index and langchain. llama_index uses langchain models under the hood.
+```python
+from gpt_index import download_loader, SimpleDirectoryReader, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
+from langchain.chat_models import ChatOpenAI
+import os
 
-Torquent non nisi lacinia faucibus nibh tortor taciti commodo porttitor, mus hendrerit id leo scelerisque mollis habitasse orci tristique aptent, lacus at molestie cubilia facilisis porta accumsan condimentum. Metus lacus suscipit porttitor integer facilisi torquent, nostra nulla platea at natoque varius venenatis, id quam pharetra aliquam leo. Dictum orci himenaeos quam mi fusce lacinia maecenas ac magna eleifend laoreet, vivamus enim curabitur ullamcorper est ultrices convallis suscipit nascetur. Ornare fames pretium ante ac eget nisi tellus vivamus, convallis mauris sapien imperdiet sollicitudin aliquet taciti quam, lacinia tempor primis magna iaculis at eu. Est facilisi proin risus eleifend orci torquent ultricies platea, quisque nullam vel porttitor euismod sociis non, maecenas sociosqu interdum arcu sed pharetra potenti. Aliquet risus tempus hendrerit sapien tellus eget cursus enim etiam dui, lobortis nostra pellentesque odio posuere morbi ad neque senectus arcu eu, turpis proin ac felis purus fames magnis dis dignissim.
+os.environ["OPENAI_API_KEY"] = 'Your API Key Here'
 
-Orci volutpat augue viverra scelerisque dictumst ut condimentum vivamus, accumsan cum sem sollicitudin aliquet vehicula porta pretium placerat, malesuada euismod primis cubilia rutrum tempus parturient. Urna mauris in nibh morbi hendrerit vulputate condimentum, iaculis consequat porttitor dui dis euismod eros, arcu elementum venenatis varius lectus nisi. Nibh arcu ultrices semper morbi quam aptent quisque porta posuere iaculis, vestibulum cum vitae primis varius natoque conubia eu. Placerat sociis sagittis sociosqu morbi purus lobortis convallis, bibendum tortor ridiculus orci habitasse viverra dictum, quis rutrum fusce potenti volutpat vehicula. Curae porta inceptos lectus mus urna litora semper aliquam libero rutrum sem dui maecenas ligula quis, eget risus non imperdiet cum morbi magnis suspendisse etiam augue porttitor placerat facilisi hendrerit. Et eleifend eget augue duis fringilla sagittis erat est habitasse commodo tristique quisque pretium, suspendisse imperdiet inceptos mollis blandit magna mus elementum molestie sed vestibulum. Euismod morbi hendrerit suscipit felis ornare libero ligula, mus tortor urna interdum blandit nisi netus posuere, purus fermentum magnis nam primis nulla.
+file_path = input('Enter the path of the file/doc: ')
 
-## Elementum nisi urna cursus nisl quam ante tristique blandit ultricies eget
+def build_index(file_path):
+    max_input_size = 4096
+    num_outputs = 512
+    max_chunk_overlap = 20
+    chunk_size_limit = 256
 
-Netus at rutrum taciti vestibulum molestie conubia semper class potenti lobortis, hendrerit donec vitae ad libero natoque parturient litora congue. Torquent rhoncus odio cursus iaculis molestie arcu leo condimentum accumsan, laoreet congue duis libero justo tortor commodo fusce, massa eros hac euismod netus sodales mi magnis. Aenean nullam sollicitudin ad velit nulla venenatis suspendisse iaculis, aliquet senectus mollis aptent fringilla volutpat nascetur, nec urna vehicula lacinia neque augue orci. Suspendisse et eleifend convallis sollicitudin posuere diam turpis gravida congue ultrices, laoreet ultricies dapibus proin facilisis magna class praesent fusce. Mus morbi magnis ultricies sed turpis ultrices tempus tortor bibendum, netus nulla viverra torquent malesuada ridiculus tempor. Parturient sociosqu erat ullamcorper gravida natoque varius, etiam habitant augue praesent per curabitur iaculis, donec pellentesque cursus suscipit aliquet. Congue curae cursus scelerisque pellentesque quis fusce arcu eros dictumst luctus ridiculus nisl viverra, turpis class faucibus phasellus feugiat eleifend fringilla orci tristique habitasse conubia quam. Habitasse montes congue sodales rutrum cras torquent cursus auctor condimentum imperdiet egestas nascetur, platea tincidunt ut sollicitudin purus libero lobortis ad nisi diam quam.
+    prompt_helper = PromptHelper(max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit=chunk_size_limit)
 
-Suspendisse et eleifend convallis sollicitudin posuere diam turpis gravida congue ultrices, laoreet ultricies dapibus proin facilisis magna class praesent fusce. Mus morbi magnis ultricies sed turpis ultrices tempus tortor bibendum, netus nulla viverra torquent malesuada ridiculus tempor. Parturient sociosqu erat ullamcorper gravida natoque varius, etiam habitant augue praesent per curabitur iaculis, donec pellentesque cursus suscipit aliquet. Congue curae cursus scelerisque pellentesque quis fusce arcu eros dictumst luctus ridiculus nisl viverra, turpis class faucibus phasellus feugiat eleifend fringilla orci tristique habitasse conubia quam. Habitasse montes congue sodales rutrum cras torquent cursus auctor condimentum imperdiet egestas nascetur.
+    llm_predictor = LLMPredictor(llm=ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs))
+
+    download_loader('SimpleDirectoryReader')
+    documents = SimpleDirectoryReader(input_files=[file_path]).load_data()
+    index = GPTSimpleVectorIndex(documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
+    return index
+
+
+index = build_index(file_path=file_path)
+
+def chatbot(prompt):
+    return index.query(prompt, response_mode="compact")
+   
+while True:
+    print('########################################')
+    pt = input('ASK: ')
+    if pt.lower()=='end':
+        break
+    response = chatbot(pt)
+    print('----------------------------------------')
+    print('ChatGPT says: ')
+    print(response)
+```
+
+Copy the above code in entirety and paste it in a file and name it whatever you want. I'm naming it `main.py`. Replace the API key placeholder in the code, with your own OpenAI API key and you are done.
+
+First up, run the below command to install the libraries that we'd need:
+
+```
+pip3 install gpt_index==0.4.24 && pip3 install langchain==0.0.142
+```
+
+You can run the code by running this command `python3 main.py` at the location of this file, when prompted give the path of your context file to the program. I'm using Martin Luther King's "[I have a dream](https://www.btboces.org/Downloads/I%20Have%20a%20Dream%20by%20Martin%20Luther%20King%20Jr.pdf)" speech transcript PDF file.
+
+```bash
+➜  python3 main.py
+Enter the path of the file/doc: blogs/docbot/martin.pdf
+```
+
+You can give any type of file format. Depending on the file
+size and your machine's power, it'll take some time to read and convert your file contents into vectors. In my case, it takes around 10 seconds to process a 30MB document. 
+
+Once it is done, you can start asking questions to your document using ChatGPT. Below are some of the example prompts and responses.
+
+```
+ASK: 
+
+what is this document about?
+
+----------------------------------------
+
+ChatGPT says: 
+
+The document is about a speech or written piece that discusses
+the promise of equal rights for all Americans, particularly
+black Americans, as outlined in the Constitution and Declaration of Independence.
+It addresses the fact that this promise has not been fully
+realized and that there is a shameful condition that needs to be dramatized.  
+```
+
+```
+ASK: 
+
+summarize the speech
+
+----------------------------------------
+
+ChatGPT says: 
+
+The speech urges America to remember the importance of freedom and justice, and emphasizes the urgent
+need for action in the face of racial injustice. The speaker encourages the audience to rise above 
+segregation and work towards brotherhood. The overall message is that now is the time to make real the
+promises of democracy. 
+```
+
+That's it. As simple as that. 35 lines of code. Llama-Index and other tools like it have made it so easy and user friendly to leverage the full power of LLMs.
+
+---
+
+## Okay that's cool, but what really happens underneath?
+
+Llama-index and langchain have made the whole process very seamless, which otherwise would've been a really cumbersome task. So, here's what happens:
+
+- When you give llama_index the document, it uses one of the adapters that actually suits for the file type from the collection of pre-built adapters from the [Llama-Hub](https://llamahub.ai/) and parses the contents of the file.
+
+- Once the parsing is done, llama_index converts the whole content into chunks of vectors. 
+
+- When you put up a question to ChatGPT, llama_index takes in your question retrieves the chunks of vectors from the parsed file that are relevant to your prompt using [similarity search](https://www.pinecone.io/learn/what-is-similarity-search/)
+
+- Once it retrieves the relevant chunks, llama_index overrides your original prompt by adding what it retrieved as the context to the model. 
+
+- With the original question and the context it just has been provided with, ChatGPT should be able to understand your question.
+
+And voila! you'll get a relevant response from ChatGPT. This is how llama_index makes LLMs understand custom knowledge. There's more to this and new features are getting added to llama_index everyday. Make sure you explore more of what it could do.
+
+---
+Now, that's about llama_index. In the next blog of this series. We'll see how to use langchain to build a more robust chatbot framework that keeps track of the previous conversations it had with the user. See ya in the next one :wink:

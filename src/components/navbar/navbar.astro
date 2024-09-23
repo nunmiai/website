@@ -5,19 +5,19 @@ import Dropdown from "./dropdown.astro";
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 
 const menuitems = [
-  {
-    title: "Services",
-    path: "/services",
-    children: [
-      { title: "ML Consulting", path: "/services/ml-consulting" },
-      { title: "Engineering Consulting", path: "/services/engineering-consulting" },
-      { title: "Custom AI Solutions", path: "/services/custom-ai-solutions" },
-    ],
-  },
   // {
-  //   title: "About Us",
-  //   path: "/about",
+  //   title: "Services",
+  //   path: "/services",
+  //   children: [
+  //     { title: "ML Consulting", path: "/services/ml-consulting" },
+  //     { title: "Engineering Consulting", path: "/services/engineering-consulting" },
+  //     { title: "Custom AI Solutions", path: "/services/custom-ai-solutions" },
+  //   ],
   // },
+  {
+    title: "About",
+    path: "/about",
+  },
   {
     title: "Blog",
     path: "/blog",
@@ -34,7 +34,7 @@ const menuitems = [
     <Astronav>
       <div class="flex w-full lg:w-auto items-center justify-between">
         <a href="/" class="text-lg">
-          <span class="font-bold text-slate-800">Nunmi</span><span class="text-slate-500">.ai</span>
+          <span class="font-bold text-slate-800">NuNmi</span><span class="text-slate-500">.ai</span>
         </a>
         <div class="block lg:hidden">
           <MenuIcon class="w-4 h-4 text-gray-800" />
@@ -71,10 +71,10 @@ const menuitems = [
             ))
           }
         </ul>
-        <div class="lg:hidden flex items-center mt-3 gap-4">
+        <!-- <div class="lg:hidden flex items-center mt-3 gap-4">
           <Link href="/login" style="muted" block size="md">Log in</Link>
           <Link href="/signup" size="md" block>Sign up</Link>
-        </div>
+        </div> -->
       </MenuItems>
     </Astronav>
     <!-- <div>
