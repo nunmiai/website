@@ -19,5 +19,5 @@ npm run dev
 
 ---
 ## Updating Blogs
-The blogs that are displayed in the website are present in the `src/content/blog` directory
-Add your blogs there in the markdown format (MDX is also supported). Make sure you update the header of the MD file with the right author, publish time, header image and everything.
+The blogs that are displayed in the website are present in the `src/content/blog` directory.
+Add your blogs there in the markdown format (MDX is also supported). Make sure you update the header of the `.md` file with the right author, publish time, header image and everything.
