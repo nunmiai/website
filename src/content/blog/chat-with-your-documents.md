@@ -3,10 +3,10 @@ draft: false
 title: "Chat with your documents using ChatGPT"
 snippet: "Ornare cum cursus laoreet sagittis nunc fusce posuere per euismod dis vehicula a, semper fames lacus maecenas dictumst pulvinar neque enim non potenti. Torquent hac sociosqu eleifend potenti."
 image: {
-    src: "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?&fit=crop&w=430&h=240",
+    src: "https://images.unsplash.com/photo-1593349480506-8433634cdcbe?q=80&w=2940&auto=format&fit=crop&w=430&h=240",
     alt: "RAG"
 }
-publishDate: "2024-09-20 11:39"
+publishDate: "2023-05-06 11:39"
 category: "Tutorials"
 author: "Adheeban"
 tags: [ChatGPT, OpenAI, RAG]
