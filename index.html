@@ -1,0 +1,200 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v4.12.2"><title>Empowering Your Skills in AI and Engineering</title><link rel="canonical" href="https://nunmi.in/"><meta name="description" content="NuNmi.ai offers expert consulting and courses in machine learning and engineering."><meta name="robots" content="index, follow"><meta property="og:title" content="NuNmi.ai - Empowering Your Success"><meta property="og:type" content="website"><meta property="og:image" content="https://nunmi.in/opengraph.jpg"><meta property="og:url" content="https://nunmi.in/"><meta property="og:image:url" content="https://nunmi.in/opengraph.jpg"><meta property="og:image:alt" content="NuNmi.ai Homepage Screenshot"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@nunmi_ai"><meta name="twitter:creator" content="@nunmi_ai"><link rel="stylesheet" href="/_astro/about.BBmUqgs6.css"></head> <body> <div class="max-w-screen-xl mx-auto px-5">  <header class="flex flex-col lg:flex-row justify-between items-center my-5">  <div class="flex w-full lg:w-auto items-center justify-between"> <a href="/" class="text-lg"> <span class="font-bold text-slate-800">NuNmi</span><span class="text-slate-500">.ai</span> </a> <div class="block lg:hidden"> <button id="astronav-menu" aria-label="Toggle Menu">  <svg fill="currentColor" class="w-4 h-4 text-gray-800" width="24" height="24" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg"> <title>Toggle Menu</title> <path class="astronav-close-icon astronav-toggle hidden" fill-rule="evenodd" clip-rule="evenodd" d="M18.278 16.864a1 1 0 01-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 01-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 011.414-1.414l4.829 4.828 4.828-4.828a1 1 0 111.414 1.414l-4.828 4.829 4.828 4.828z"></path> <path class="astronav-open-icon astronav-toggle" fill-rule="evenodd" d="M4 5h16a1 1 0 010 2H4a1 1 0 110-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2z"></path> </svg>  </button> </div> </div> <nav class="astronav-items astronav-toggle hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">  <ul class="flex flex-col lg:flex-row lg:gap-3"> <li> <a href="/about" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> About</span>  </a> </li><li> <a href="/blog" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Blog</span>  </a> </li><li> <a href="/contact" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Contact</span>  </a> </li> </ul>   </nav>  <script>(function(){const closeOnClick = false;
+
+["DOMContentLoaded", "astro:after-swap"].forEach((event) => {
+  document.addEventListener(event, addListeners);
+});
+
+// Function to clone and replace elements
+function cloneAndReplace(element) {
+  const clone = element.cloneNode(true);
+  element.parentNode.replaceChild(clone, element);
+}
+
+function addListeners() {
+  // Clean up existing listeners
+  const oldMenuButton = document.getElementById("astronav-menu");
+  if (oldMenuButton) {
+    cloneAndReplace(oldMenuButton);
+  }
+
+  const oldDropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  oldDropdownMenus.forEach((menu) => {
+    cloneAndReplace(menu);
+  });
+
+  // Mobile nav toggle
+  const menuButton = document.getElementById("astronav-menu");
+  menuButton && menuButton.addEventListener("click", toggleMobileNav);
+
+  // Dropdown menus
+  const dropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  dropdownMenus.forEach((menu) => {
+    const button = menu.querySelector("button");
+    button &&
+      button.addEventListener("click", (event) =>
+        toggleDropdownMenu(event, menu, dropdownMenus)
+      );
+
+    // Handle Submenu Dropdowns
+    const dropDownSubmenus = menu.querySelectorAll(
+      ".astronav-dropdown-submenu"
+    );
+
+    dropDownSubmenus.forEach((submenu) => {
+      const submenuButton = submenu.querySelector("button");
+      submenuButton &&
+        submenuButton.addEventListener("click", (event) => {
+          event.stopImmediatePropagation();
+          toggleSubmenuDropdown(event, submenu);
+        });
+    });
+  });
+
+  // Clicking away from dropdown will remove the dropdown class
+  document.addEventListener("click", closeAllDropdowns);
+
+  if (closeOnClick) {
+    handleCloseOnClick();
+  }
+}
+
+function toggleMobileNav() {
+  [...document.querySelectorAll(".astronav-toggle")].forEach((el) => {
+    el.classList.toggle("hidden");
+  });
+}
+
+function toggleDropdownMenu(event, menu, dropdownMenus) {
+  toggleMenu(menu);
+
+  // Close one dropdown when selecting another
+  Array.from(dropdownMenus)
+    .filter((el) => el !== menu && !menu.contains(el))
+    .forEach(closeMenu);
+
+  event.stopPropagation();
+}
+
+function toggleSubmenuDropdown(event, submenu) {
+  event.stopPropagation();
+  toggleMenu(submenu);
+
+  // Close sibling submenus at the same nesting level
+  const siblingSubmenus = submenu
+    .closest(".astronav-dropdown")
+    .querySelectorAll(".astronav-dropdown-submenu");
+  Array.from(siblingSubmenus)
+    .filter((el) => el !== submenu && !submenu.contains(el))
+    .forEach(closeMenu);
+}
+
+function closeAllDropdowns(event) {
+  const dropdownMenus = document.querySelectorAll(".dropdown-toggle");
+  const dropdownParent = document.querySelectorAll(
+    ".astronav-dropdown, .astronav-dropdown-submenu"
+  );
+  const isButtonInsideDropdown = [
+    ...document.querySelectorAll(
+      ".astronav-dropdown button, .astronav-dropdown-submenu button, #astronav-menu"
+    ),
+  ].some((button) => button.contains(event.target));
+  if (!isButtonInsideDropdown) {
+    dropdownMenus.forEach((d) => {
+      // console.log("I ran", d);
+      // if (!d.contains(event.target)) {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.classList.add("hidden");
+      // }
+    });
+    dropdownParent.forEach((d) => {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.setAttribute("aria-expanded", "false");
+    });
+  }
+}
+
+function toggleMenu(menu) {
+  menu.classList.toggle("open");
+  const expanded = menu.getAttribute("aria-expanded") === "true";
+  menu.setAttribute("aria-expanded", expanded ? "false" : "true");
+  menu.hasAttribute("open")
+    ? menu.removeAttribute("open")
+    : menu.setAttribute("open", "");
+
+  const dropdownToggle = menu.querySelector(".dropdown-toggle");
+  const dropdownExpanded = dropdownToggle.getAttribute("aria-expanded");
+  dropdownToggle.classList.toggle("hidden");
+  dropdownToggle.setAttribute(
+    "aria-expanded",
+    dropdownExpanded === "true" ? "false" : "true"
+  );
+}
+
+function closeMenu(menu) {
+  // console.log("closing", menu);
+  menu.classList.remove("open");
+  menu.removeAttribute("open");
+  menu.setAttribute("aria-expanded", "false");
+  const dropdownToggles = menu.querySelectorAll(".dropdown-toggle");
+  dropdownToggles.forEach((toggle) => {
+    toggle.classList.add("hidden");
+    toggle.setAttribute("aria-expanded", "false");
+  });
+}
+
+function handleCloseOnClick() {
+  const navMenuItems = document.querySelector(".astronav-items");
+  const navToggle = document.getElementById("astronav-menu");
+  const navLink = navMenuItems && navMenuItems.querySelectorAll("a");
+
+  const MenuIcons = navToggle.querySelectorAll(".astronav-toggle");
+
+  navLink &&
+    navLink.forEach((item) => {
+      item.addEventListener("click", () => {
+        navMenuItems?.classList.add("hidden");
+        MenuIcons.forEach((el) => {
+          el.classList.toggle("hidden");
+        });
+      });
+    });
+}
+})();</script> <!-- <div>
+      <div class="hidden lg:flex items-center gap-4">
+        <Link href="/login">Log in</Link>
+        <Link href="/signup" size="md">Sign up</Link>
+      </div>
+    </div> --> </header>  </div>  <div class="max-w-screen-xl mx-auto px-5">  <main class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24"> <div class="py-6 md:order-1 hidden md:block"> <picture> <source srcset="/_astro/robot.CKw0pt4a_14Iutg.webp 200w, /_astro/robot.CKw0pt4a_Z1Tgz3k.webp 400w, /_astro/robot.CKw0pt4a_bUue1.webp 600w" type="image/webp" sizes="(max-width: 800px) 100vw, 620px"> <img src="/_astro/robot.CKw0pt4a_Z1Sx09m.png" srcset="/_astro/robot.CKw0pt4a_sYojo.png 200w, /_astro/robot.CKw0pt4a_Z2v0Fdc.png 400w, /_astro/robot.CKw0pt4a_ZoNAUQ.png 600w" alt="NuNmi.ai logo" sizes="(max-width: 800px) 100vw, 620px" loading="eager" width="2048" height="2048" decoding="async"> </picture> </div> <div> <h1 class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
+Welcome to NuNmi.ai
+</h1> <p class="text-lg mt-4 text-slate-600 max-w-xl">
+At NuNmi.ai, we excel in delivering AI and engineering solutions. Our team of exceptional engineers and research scientists provides unparalleled consulting services. Partner with us for quality outcomes in your ML projects and beyond.
+</p> <div class="mt-6 flex flex-col sm:flex-row gap-3"> <a href="#features" rel="noopener" class="rounded text-center transition focus-visible:ring-2 ring-offset-2 ring-gray-200 px-5 py-2.5 bg-black text-white hover:bg-gray-800  border-2 border-transparent flex gap-1 items-center justify-center"> <svg width="1em" height="1em" viewBox="0 0 24 24" class="text-white w-5 h-5" data-icon="bx:bxs-cloud-download">  <symbol id="ai:bx:bxs-cloud-download"><path d="M18.944 11.112C18.507 7.67 15.56 5 12 5C9.244 5 6.85 6.61 5.757 9.149C3.609 9.792 2 11.82 2 14c0 2.657 2.089 4.815 4.708 4.971V19H17.99v-.003L18 19c2.206 0 4-1.794 4-4a4.008 4.008 0 0 0-3.056-3.888zM8 12h3V9h2v3h3l-4 5l-4-5z" fill="currentColor"/></symbol><use xlink:href="#ai:bx:bxs-cloud-download"></use>  </svg>
+Explore Our Services
+ </a> <a href="/blog" rel="noopener" class="rounded text-center transition focus-visible:ring-2 ring-offset-2 ring-gray-200 px-5 py-2.5 bg-white border-2 border-black hover:bg-gray-100 text-black  flex gap-1 items-center justify-center"> <svg width="1em" height="1em" viewBox="0 0 24 24" class="text-black w-4 h-4" data-icon="bx:bxl-medium">  <symbol id="ai:bx:bxl-medium"><path d="M4.285 7.269a.733.733 0 0 0-.24-.619l-1.77-2.133v-.32h5.498l4.25 9.32l3.736-9.32H21v.319l-1.515 1.451a.45.45 0 0 0-.168.425v10.666a.448.448 0 0 0 .168.425l1.479 1.451v.319h-7.436v-.319l1.529-1.487c.152-.15.152-.195.152-.424V8.401L10.95 19.218h-.575L5.417 8.401v7.249c-.041.305.06.612.275.833L7.684 18.9v.319H2.036V18.9l1.992-2.417a.971.971 0 0 0 .257-.833V7.269z" fill="currentColor"/></symbol><use xlink:href="#ai:bx:bxl-medium"></use>  </svg>
+Discover Our Blogs
+ </a> </div> </div> </main> <div class="mt-16 md:mt-0" id="features"> <h2 class="text-4xl lg:text-5xl font-bold lg:tracking-tight">
+Empowering Your Success
+</h2> <p class="text-lg mt-4 text-slate-600">
+NuNmi.ai provides a comprehensive suite of services and educational opportunities to help you thrive in the fields of machine learning and engineering. Our commitment to quality and innovation drives us to deliver exceptional outcomes for our clients and learners.
+</p> </div> <div class="grid sm:grid-cols-2 md:grid-cols-3 mt-16 gap-16"> <div class="flex gap-4 items-start"> <div class="mt-1 bg-black rounded-full p-2 w-8 h-8 shrink-0"> <svg width="1em" height="1em" viewBox="0 0 24 24" class="text-white" data-icon="bx:bxs-briefcase">  <symbol id="ai:bx:bxs-briefcase"><path d="M20 6h-3V4c0-1.103-.897-2-2-2H9c-1.103 0-2 .897-2 2v2H4c-1.103 0-2 .897-2 2v3h20V8c0-1.103-.897-2-2-2zM9 4h6v2H9V4zm5 10h-4v-2H2v7c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2v-7h-8v2z" fill="currentColor"/></symbol><use xlink:href="#ai:bx:bxs-briefcase"></use>  </svg> </div> <div> <h3 class="font-semibold text-lg">AI Consulting</h3> <p class="text-slate-500 mt-2 leading-relaxed">Expert guidance and solutions for your machine learning projects, from concept to deployment. Trust our experienced team to elevate your ML initiatives.</p> </div> </div><div class="flex gap-4 items-start"> <div class="mt-1 bg-black rounded-full p-2 w-8 h-8 shrink-0"> <svg width="1em" height="1em" viewBox="0 0 24 24" class="text-white" data-icon="bx:bxs-cog">  <symbol id="ai:bx:bxs-cog"><path d="M2.344 15.271l2 3.46a1 1 0 0 0 1.366.365l1.396-.806c.58.457 1.221.832 1.895 1.112V21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1.598a8.094 8.094 0 0 0 1.895-1.112l1.396.806c.477.275 1.091.11 1.366-.365l2-3.46a1.004 1.004 0 0 0-.365-1.366l-1.372-.793a7.683 7.683 0 0 0-.002-2.224l1.372-.793c.476-.275.641-.89.365-1.366l-2-3.46a1 1 0 0 0-1.366-.365l-1.396.806A8.034 8.034 0 0 0 15 4.598V3a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v1.598A8.094 8.094 0 0 0 7.105 5.71L5.71 4.904a.999.999 0 0 0-1.366.365l-2 3.46a1.004 1.004 0 0 0 .365 1.366l1.372.793a7.683 7.683 0 0 0 0 2.224l-1.372.793c-.476.275-.641.89-.365 1.366zM12 8c2.206 0 4 1.794 4 4s-1.794 4-4 4s-4-1.794-4-4s1.794-4 4-4z" fill="currentColor"/></symbol><use xlink:href="#ai:bx:bxs-cog"></use>  </svg> </div> <div> <h3 class="font-semibold text-lg">Engineering Consulting</h3> <p class="text-slate-500 mt-2 leading-relaxed">Tailored consulting services for engineering projects, ensuring optimal performance and innovative solutions. Our expertise drives your success.</p> </div> </div><div class="flex gap-4 items-start"> <div class="mt-1 bg-black rounded-full p-2 w-8 h-8 shrink-0"> <svg width="1em" height="1em" viewBox="0 0 24 24" class="text-white" data-icon="bx:bxs-brain">  <symbol id="ai:bx:bxs-brain"><path d="M3.299 17.596c.432 1.332 1.745 2.182 3.146 2.182H6.5A2.78 2.78 0 0 0 9.223 22c.457 0 .884-.115 1.262-.313a.992.992 0 0 0 .515-.882V3.027a.997.997 0 0 0-.785-.983a2.324 2.324 0 0 0-1.479.201c-.744.356-1.18 1.151-1.18 1.978v.055a2.778 2.778 0 0 0-2.744 4.433A3.327 3.327 0 0 0 2 12c0 1.178.611 2.211 1.533 2.812c-.43.771-.571 1.746-.234 2.784zm15.889-8.885a2.778 2.778 0 0 0-2.744-4.433v-.055c0-.826-.437-1.622-1.181-1.978a2.32 2.32 0 0 0-1.478-.201a.998.998 0 0 0-.785.983v17.777c0 .365.192.712.516.882c.378.199.804.314 1.261.314a2.78 2.78 0 0 0 2.723-2.223h.056c1.4 0 2.714-.85 3.146-2.182c.337-1.038.196-2.013-.234-2.784A3.35 3.35 0 0 0 22 12a3.327 3.327 0 0 0-2.812-3.289z" fill="currentColor"/></symbol><use xlink:href="#ai:bx:bxs-brain"></use>  </svg> </div> <div> <h3 class="font-semibold text-lg">Custom AI Solutions</h3> <p class="text-slate-500 mt-2 leading-relaxed">Developing custom AI solutions to meet the unique needs of your business and drive growth. Leverage our capabilities to transform your operations.</p> </div> </div><div class="flex gap-4 items-start"> <div class="mt-1 bg-black rounded-full p-2 w-8 h-8 shrink-0"> <svg width="1em" height="1em" viewBox="0 0 24 24" class="text-white" data-icon="bx:bxs-chalkboard">  <symbol id="ai:bx:bxs-chalkboard"><path d="M20 4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h4l-1.8 2.4l1.6 1.2l2.7-3.6h3l2.7 3.6l1.6-1.2L16 18h4c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zM5 13h4v2H5v-2z" fill="currentColor"/></symbol><use xlink:href="#ai:bx:bxs-chalkboard"></use>  </svg> </div> <div> <h3 class="font-semibold text-lg">Offline Workshops</h3> <p class="text-slate-500 mt-2 leading-relaxed">Engage in hands-on learning with our offline workshops designed to provide practical skills and knowledge. Benefit from direct interaction with experts.</p> </div> </div><div class="flex gap-4 items-start"> <div class="mt-1 bg-black rounded-full p-2 w-8 h-8 shrink-0"> <svg width="1em" height="1em" viewBox="0 0 24 24" class="text-white" data-icon="bx:bxs-graduation">  <symbol id="ai:bx:bxs-graduation"><path d="M2 7v1l11 4l9-4V7L11 4z" fill="currentColor"/><path d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734c4-.126 6.586-1.972 7-3.467c.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z" fill="currentColor"/></symbol><use xlink:href="#ai:bx:bxs-graduation"></use>  </svg> </div> <div> <h3 class="font-semibold text-lg">Professional Development Plans</h3> <p class="text-slate-500 mt-2 leading-relaxed">Advance your career from anywhere with our comprehensive professional development plans on machine learning and engineering topics.</p> </div> </div><div class="flex gap-4 items-start"> <div class="mt-1 bg-black rounded-full p-2 w-8 h-8 shrink-0"> <svg width="1em" height="1em" viewBox="0 0 24 24" class="text-white" data-icon="bx:bxs-group">  <symbol id="ai:bx:bxs-group"><path d="M9.5 12c2.206 0 4-1.794 4-4s-1.794-4-4-4s-4 1.794-4 4s1.794 4 4 4zm1.5 1H8c-3.309 0-6 2.691-6 6v1h15v-1c0-3.309-2.691-6-6-6z" fill="currentColor"/><path d="M16.604 11.048a5.67 5.67 0 0 0 .751-3.44c-.179-1.784-1.175-3.361-2.803-4.44l-1.105 1.666c1.119.742 1.8 1.799 1.918 2.974a3.693 3.693 0 0 1-1.072 2.986l-1.192 1.192l1.618.475C18.951 13.701 19 17.957 19 18h2c0-1.789-.956-5.285-4.396-6.952z" fill="currentColor"/></symbol><use xlink:href="#ai:bx:bxs-group"></use>  </svg> </div> <div> <h3 class="font-semibold text-lg">Community Support</h3> <p class="text-slate-500 mt-2 leading-relaxed">Join our community of learners and professionals to get support, share knowledge, and grow together. Be part of a vibrant network of innovators.</p> </div> </div> </div> <!-- <div class="mt-24">
+  <h2 class="text-center text-slate-500">Technologies We Specialize In</h2>
+  <div class="flex gap-8 md:gap-20 items-center justify-center mt-10 flex-wrap">
+    <Icon class="size-8 md:size-12" name="simple-icons:python" />
+    <Icon class="size-8 md:size-12" name="simple-icons:tensorflow" />
+    <Icon class="size-8 md:size-12" name="simple-icons:pytorch" />
+    <Icon class="size-8 md:size-16" name="simple-icons:scikitlearn" />
+    <Icon class="size-8 md:size-16" name="simple-icons:docker" />
+    <Icon class="size-8 md:size-12" name="simple-icons:kubernetes" />
+  </div>
+</div> --> <div class="bg-black p-8 md:px-20 md:py-20 mt-20 mx-auto max-w-5xl rounded-lg flex flex-col items-center text-center"> <h2 class="text-white text-4xl md:text-6xl tracking-tight">
+Empower Innovation with NuNmi.ai
+</h2> <p class="text-slate-400 mt-4 text-lg md:text-xl">
+Partner with us for expert-led consulting and hands-on solutions in AI and engineering to elevate your projects to the next level.
+</p> <div class="flex mt-5"> <a href="/contact" class="rounded text-center transition focus-visible:ring-2 ring-offset-2 ring-gray-200 px-5 py-2.5 bg-white text-black   border-2 border-transparent">Contact Us </a> </div> </div>  </div>  <footer class="my-20"> <p class="text-center text-sm text-slate-500">
+Copyright © 2024 NuNmi.ai. All rights reserved.
+</p> <p class="text-center text-xs text-slate-500 mt-1">
+Designed and developed by <a href="https://nunmi.ai" target="_blank" rel="noopener" class="hover:underline">
+NuNmi.ai
+</a> </p> </footer>  </body> </html>

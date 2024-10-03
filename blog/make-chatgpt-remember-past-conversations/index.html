@@ -1,0 +1,311 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v4.12.2"><title>Make ChatGPT keep track of your past conversations | NuNmi.ai</title><link rel="canonical" href="https://nunmi.in/blog/make-chatgpt-remember-past-conversations/"><meta name="description" content="NuNmi.ai offers expert consulting and courses in machine learning and engineering."><meta name="robots" content="index, follow"><meta property="og:title" content="NuNmi.ai - Empowering Your Success"><meta property="og:type" content="website"><meta property="og:image" content="https://nunmi.in/opengraph.jpg"><meta property="og:url" content="https://nunmi.in/blog/make-chatgpt-remember-past-conversations/"><meta property="og:image:url" content="https://nunmi.in/opengraph.jpg"><meta property="og:image:alt" content="NuNmi.ai Homepage Screenshot"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@nunmi_ai"><meta name="twitter:creator" content="@nunmi_ai"><link rel="stylesheet" href="/_astro/about.BBmUqgs6.css"></head> <body> <div class="max-w-screen-xl mx-auto px-5">  <header class="flex flex-col lg:flex-row justify-between items-center my-5">  <div class="flex w-full lg:w-auto items-center justify-between"> <a href="/" class="text-lg"> <span class="font-bold text-slate-800">NuNmi</span><span class="text-slate-500">.ai</span> </a> <div class="block lg:hidden"> <button id="astronav-menu" aria-label="Toggle Menu">  <svg fill="currentColor" class="w-4 h-4 text-gray-800" width="24" height="24" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg"> <title>Toggle Menu</title> <path class="astronav-close-icon astronav-toggle hidden" fill-rule="evenodd" clip-rule="evenodd" d="M18.278 16.864a1 1 0 01-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 01-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 011.414-1.414l4.829 4.828 4.828-4.828a1 1 0 111.414 1.414l-4.828 4.829 4.828 4.828z"></path> <path class="astronav-open-icon astronav-toggle" fill-rule="evenodd" d="M4 5h16a1 1 0 010 2H4a1 1 0 110-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2z"></path> </svg>  </button> </div> </div> <nav class="astronav-items astronav-toggle hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">  <ul class="flex flex-col lg:flex-row lg:gap-3"> <li> <a href="/about" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> About</span>  </a> </li><li> <a href="/blog" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Blog</span>  </a> </li><li> <a href="/contact" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Contact</span>  </a> </li> </ul>   </nav>  <script>(function(){const closeOnClick = false;
+
+["DOMContentLoaded", "astro:after-swap"].forEach((event) => {
+  document.addEventListener(event, addListeners);
+});
+
+// Function to clone and replace elements
+function cloneAndReplace(element) {
+  const clone = element.cloneNode(true);
+  element.parentNode.replaceChild(clone, element);
+}
+
+function addListeners() {
+  // Clean up existing listeners
+  const oldMenuButton = document.getElementById("astronav-menu");
+  if (oldMenuButton) {
+    cloneAndReplace(oldMenuButton);
+  }
+
+  const oldDropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  oldDropdownMenus.forEach((menu) => {
+    cloneAndReplace(menu);
+  });
+
+  // Mobile nav toggle
+  const menuButton = document.getElementById("astronav-menu");
+  menuButton && menuButton.addEventListener("click", toggleMobileNav);
+
+  // Dropdown menus
+  const dropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  dropdownMenus.forEach((menu) => {
+    const button = menu.querySelector("button");
+    button &&
+      button.addEventListener("click", (event) =>
+        toggleDropdownMenu(event, menu, dropdownMenus)
+      );
+
+    // Handle Submenu Dropdowns
+    const dropDownSubmenus = menu.querySelectorAll(
+      ".astronav-dropdown-submenu"
+    );
+
+    dropDownSubmenus.forEach((submenu) => {
+      const submenuButton = submenu.querySelector("button");
+      submenuButton &&
+        submenuButton.addEventListener("click", (event) => {
+          event.stopImmediatePropagation();
+          toggleSubmenuDropdown(event, submenu);
+        });
+    });
+  });
+
+  // Clicking away from dropdown will remove the dropdown class
+  document.addEventListener("click", closeAllDropdowns);
+
+  if (closeOnClick) {
+    handleCloseOnClick();
+  }
+}
+
+function toggleMobileNav() {
+  [...document.querySelectorAll(".astronav-toggle")].forEach((el) => {
+    el.classList.toggle("hidden");
+  });
+}
+
+function toggleDropdownMenu(event, menu, dropdownMenus) {
+  toggleMenu(menu);
+
+  // Close one dropdown when selecting another
+  Array.from(dropdownMenus)
+    .filter((el) => el !== menu && !menu.contains(el))
+    .forEach(closeMenu);
+
+  event.stopPropagation();
+}
+
+function toggleSubmenuDropdown(event, submenu) {
+  event.stopPropagation();
+  toggleMenu(submenu);
+
+  // Close sibling submenus at the same nesting level
+  const siblingSubmenus = submenu
+    .closest(".astronav-dropdown")
+    .querySelectorAll(".astronav-dropdown-submenu");
+  Array.from(siblingSubmenus)
+    .filter((el) => el !== submenu && !submenu.contains(el))
+    .forEach(closeMenu);
+}
+
+function closeAllDropdowns(event) {
+  const dropdownMenus = document.querySelectorAll(".dropdown-toggle");
+  const dropdownParent = document.querySelectorAll(
+    ".astronav-dropdown, .astronav-dropdown-submenu"
+  );
+  const isButtonInsideDropdown = [
+    ...document.querySelectorAll(
+      ".astronav-dropdown button, .astronav-dropdown-submenu button, #astronav-menu"
+    ),
+  ].some((button) => button.contains(event.target));
+  if (!isButtonInsideDropdown) {
+    dropdownMenus.forEach((d) => {
+      // console.log("I ran", d);
+      // if (!d.contains(event.target)) {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.classList.add("hidden");
+      // }
+    });
+    dropdownParent.forEach((d) => {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.setAttribute("aria-expanded", "false");
+    });
+  }
+}
+
+function toggleMenu(menu) {
+  menu.classList.toggle("open");
+  const expanded = menu.getAttribute("aria-expanded") === "true";
+  menu.setAttribute("aria-expanded", expanded ? "false" : "true");
+  menu.hasAttribute("open")
+    ? menu.removeAttribute("open")
+    : menu.setAttribute("open", "");
+
+  const dropdownToggle = menu.querySelector(".dropdown-toggle");
+  const dropdownExpanded = dropdownToggle.getAttribute("aria-expanded");
+  dropdownToggle.classList.toggle("hidden");
+  dropdownToggle.setAttribute(
+    "aria-expanded",
+    dropdownExpanded === "true" ? "false" : "true"
+  );
+}
+
+function closeMenu(menu) {
+  // console.log("closing", menu);
+  menu.classList.remove("open");
+  menu.removeAttribute("open");
+  menu.setAttribute("aria-expanded", "false");
+  const dropdownToggles = menu.querySelectorAll(".dropdown-toggle");
+  dropdownToggles.forEach((toggle) => {
+    toggle.classList.add("hidden");
+    toggle.setAttribute("aria-expanded", "false");
+  });
+}
+
+function handleCloseOnClick() {
+  const navMenuItems = document.querySelector(".astronav-items");
+  const navToggle = document.getElementById("astronav-menu");
+  const navLink = navMenuItems && navMenuItems.querySelectorAll("a");
+
+  const MenuIcons = navToggle.querySelectorAll(".astronav-toggle");
+
+  navLink &&
+    navLink.forEach((item) => {
+      item.addEventListener("click", () => {
+        navMenuItems?.classList.add("hidden");
+        MenuIcons.forEach((el) => {
+          el.classList.toggle("hidden");
+        });
+      });
+    });
+}
+})();</script> <!-- <div>
+      <div class="hidden lg:flex items-center gap-4">
+        <Link href="/login">Log in</Link>
+        <Link href="/signup" size="md">Sign up</Link>
+      </div>
+    </div> --> </header>  </div>  <div class="max-w-screen-xl mx-auto px-5">  <div class="mx-auto max-w-3xl mt-14"> <span class="text-blue-400 uppercase tracking-wider text-sm font-medium"> Tutorials </span> <h1 class="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight"> Make ChatGPT keep track of your past conversations </h1> <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap"> <!-- <span class="text-gray-400">{entry.data.author}</span> --> <!-- <span class="text-gray-400">•</span> --> <time class="text-gray-400" datetime="2023-05-10T18:30:00.000Z"> Thu May 11 2023 </time> <span class="text-gray-400 hidden md:block">•</span> <div class="w-full md:w-auto flex flex-wrap gap-3"> <span class="text-sm text-gray-500">#Python</span><span class="text-sm text-gray-500">#GenAI</span><span class="text-sm text-gray-500">#Langchain</span> </div> </div> </div> <div class="mx-auto prose prose-lg mt-6 max-w-3xl"> <p>In our previous blog, we fed ChatGPT with the custom knowledge from documents and made it answer our queries using Llama-Index. One problem with the previous implementation is that the chatbot wouldn’t be able to answer any of our questions addressing the previous questions/prompts. Here’s what I’m talking about:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ASK: You are an AI assistant, specialized in programming.                                    </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>----------------------------------------</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ChatGPT says: </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Hello! I'm here to assist you with anything related to</span></span>
+<span class="line"><span>programming. What can I help you with today? </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>########################################</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ASK: what did I tell you earlier?                                  </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>----------------------------------------</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ChatGPT says: </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>I'm sorry, but as an AI language model, I don't have access to</span></span>
+<span class="line"><span>any context or information about our previous interactions</span></span>
+<span class="line"><span>unless you provide it to me. Could you please clarify what you</span></span>
+<span class="line"><span>asked me earlier? I'll do my best to assist you.</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>So, lets set the custom knowledge base aside for a short-while and focus on this memory problem in this blog. We will be using the Langchain framework that offers various kinds of memory classes that will help us to build a chatbot system that keeps track of the past conversations we had with it.</p>
+<p>If you ever visited <a href="chat.openai.com">chat.openai.com</a>, you would know that OpenAI maintains histories of chats, ChatGPT had with the user in seperate containers called sessions. Basically, we’ll be trying to mimic these sessions using langchain.</p>
+<p>Now, that should give you an idea. Before we start, here are some more things you should know.</p>
+<ul>
+<li>OpenAI’s ChatGPT has a token limit of 4096 (1 token =~ 4 characters)</li>
+<li>This limit includes both your prompt and the response (completion tokens) that is returned from ChatGPT</li>
+<li>Anything that has to be generated post this token limit will be ignored abruptly without even a single warning</li>
+<li>So, ideally we should be keeping our prompt token limit with 2048 (half the limit) and leave the rest for ChatGPT’s completion. This buffer changes based on your use case.</li>
+</ul>
+<p>Well, why am I blabbering all this now? I’ll explain in a while. Now, without further ado, let’s get started with langchain.</p>
+<hr>
+<h2 id="enter-langchain-parrotlink">Enter Langchain :parrot::link:</h2>
+<p>So, what’s our goal? We don’t have to worry about feeding document context into the LLM for now. We rather have to build a simple chatbot that remembers our past conversations. With langchain, it is as easy as 1, 2, 3 !</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.chat_models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> ChatOpenAI</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.chains </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> ConversationChain</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.memory </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> ConversationBufferMemory</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">os.environ[</span><span style="color:#9ECBFF">"OPENAI_API_KEY"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'Your API Key Here'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">llm</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">ChatOpenAI(</span><span style="color:#FFAB70">temperature</span><span style="color:#F97583">=</span><span style="color:#79B8FF">0.7</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">model_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"gpt-3.5-turbo"</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">max_tokens</span><span style="color:#F97583">=</span><span style="color:#79B8FF">512</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">conversation </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ConversationChain(</span></span>
+<span class="line"><span style="color:#FFAB70">    llm</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">llm, </span></span>
+<span class="line"><span style="color:#6A737D">    # verbose=True, </span></span>
+<span class="line"><span style="color:#FFAB70">    memory</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">ConversationBufferMemory()</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> chatbot</span><span style="color:#E1E4E8">(pt):</span></span>
+<span class="line"><span style="color:#E1E4E8">    res </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> conversation.predict(</span><span style="color:#FFAB70">input</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">pt)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> res</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#79B8FF"> __name__</span><span style="color:#F97583">==</span><span style="color:#9ECBFF">'__main__'</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'########################################</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        pt </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> input</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'ASK: '</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> pt.lower()</span><span style="color:#F97583">==</span><span style="color:#9ECBFF">'end'</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">            break</span></span>
+<span class="line"><span style="color:#E1E4E8">        response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> chatbot(pt)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">----------------------------------------</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'ChatGPT says: </span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(response, </span><span style="color:#9ECBFF">'</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<p>That’s all you gotta do. Now you know the drill, copy the above snippet and name the file whatever you want and run it with <code>python3 &#x3C;filename>.py></code></p>
+<p>Here’s the conversation I had:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ASK: Hello, who are you?</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>----------------------------------------</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ChatGPT says: </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Hello! I am an artificial intelligence program designed to</span></span>
+<span class="line"><span>interact with humans and assist with various tasks. How can I</span></span>
+<span class="line"><span>help you today? </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>########################################</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ASK: Who was martin luther king?</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>----------------------------------------</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ChatGPT says: </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Martin Luther King Jr. was an American Baptist minister and</span></span>
+<span class="line"><span>activist who became the most visible spokesperson and leader</span></span>
+<span class="line"><span>in the civil rights movement from 1954 until his assassination</span></span>
+<span class="line"><span>in 1968.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>########################################</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ASK: what was his profession?</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>----------------------------------------</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ChatGPT says: </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Martin Luther King Jr. was a Baptist minister and activist. He</span></span>
+<span class="line"><span>became a prominent leader in the civil rights movement and</span></span>
+<span class="line"><span>advocated for nonviolent civil disobedience to advance civil</span></span>
+<span class="line"><span>rights for African Americans. </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>########################################</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ASK: Okay, what was my first question to you?</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>----------------------------------------</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ChatGPT says: </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Your first question to me was "Hello, who are you?" </span></span>
+<span class="line"><span></span></span></code></pre>
+<p>As you could clearly see, now the LLM is able to remember my past conversations. Even the first question I asked. In the code setting the <code>verbose</code> argument to <code>True</code> during the initialization of <code>ConversationChain</code> class is upto you. Setting the option to true will give you a glimpse of what’s happening in the backend as we sail through the conversation with the LLM.</p>
+<p>Our conversations will be stored in the Memory class of langchain, if you want to store the conversation for later retrieval, you can do so by pickling the <code>chain.messages</code> class and save it in a file. Later when you need to load your history, you just have to overwrite your chain’s <code>messages</code> class with the pickled string, like how I have done below:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">qa </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ConversationChain(</span></span>
+<span class="line"><span style="color:#FFAB70">            llm</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">llm, </span><span style="color:#FFAB70">memory</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">memory)</span></span>
+<span class="line"><span style="color:#E1E4E8">        </span></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">'sessions/</span><span style="color:#79B8FF">{self</span><span style="color:#E1E4E8">.history_key</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">,</span><span style="color:#9ECBFF">'rb'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">     user_ses </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> pickle.loads(f.read())</span></span>
+<span class="line"><span style="color:#E1E4E8">     qa.memory </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> user_ses</span></span>
+<span class="line"></span></code></pre>
+<hr>
+<h2 id="enough-with-the-code-now-whats-happening-underneath">Enough with the code! Now, What’s happening underneath?</h2>
+<p>In the example code snippet above, I have used the <code>ConversationBufferMemory</code> memory class, this is the most simplest implementation of memory in langchain. There are other memory classes too in langchain, each with its own perk. Before I get into that, Here’s what happens when you have a conversation with a chain with memory in langchain:</p>
+<ul>
+<li>When you send in the first question or prompt to the LLM, it returns a response. Cool.</li>
+<li>Now, when you send the second prompt, langchain also sends the previous conversation the user had with the LLM as context for the LLM, so that the LLM would be able to answer any questions addressing the previous questions.</li>
+<li>This happens with every conversation. Previous conversations will be linked as context to the LLM with every hit to the LLM’s API.</li>
+</ul>
+<p>A very simple engineering problem handled effortlessly with langchain. Now, Remember when I told you about the token limit in ChatGPT? It plays a crucial role now. Whatever conversation you had previously with the LLM will be linked with your original prompt and sent to the API. As the depth of the conversation increases, the percentage of tokens the history uses in the whole 4096 token limit increases rapidly. Which will eventually leave no room for the LLM’s response to the current question.</p>
+<p>Langchain knows about this problem very well, that’s why they have different memory classes in their memory module that suits your unique use case, I’ll give short note on a impressive few.</p>
+<p><code>ConversationSummaryMemory</code> - This type of memory creates a summary of the conversation over time. This can be useful for condensing information from the conversation over time resulting in a lesser usage of tokens within the 4096 limit.</p>
+<p><code>ConversationKGMemory</code> - This type of memory uses a knowledge graph to recreate memory. It identifies the entities and maps out the relation between each of those entities.</p>
+<p>These memories use the LLM itself to identify entities, to summarize the previous conversations etc. This should be taken into account as this is an extra hit to the API before every conversation. There are a lot more memory classes in langchain, Be sure you give langchain’s documentation a read <a href="https://python.langchain.com/en/latest/modules/memory/how_to_guides.html">here</a></p>
+<hr>
+<p>Now, that’s about Langchain’s memory classes. In the next blog of this series, we’ll try to combine the vectore store from the first blog with the memory classes in this blog. LlamaIndex + Langchain :fire:. See ya in the next one :wink:</p> </div> <script id="mathjax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script> <div class="text-center mt-8"> <a href="/blog" class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition">← Back to Blog</a> </div>  </div>  <footer class="my-20"> <p class="text-center text-sm text-slate-500">
+Copyright © 2024 NuNmi.ai. All rights reserved.
+</p> <p class="text-center text-xs text-slate-500 mt-1">
+Designed and developed by <a href="https://nunmi.ai" target="_blank" rel="noopener" class="hover:underline">
+NuNmi.ai
+</a> </p> </footer>  </body> </html>

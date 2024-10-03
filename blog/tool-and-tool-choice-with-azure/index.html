@@ -1,0 +1,301 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v4.12.2"><title>Tools and Tool Choice with Azure | NuNmi.ai</title><link rel="canonical" href="https://nunmi.in/blog/tool-and-tool-choice-with-azure/"><meta name="description" content="NuNmi.ai offers expert consulting and courses in machine learning and engineering."><meta name="robots" content="index, follow"><meta property="og:title" content="NuNmi.ai - Empowering Your Success"><meta property="og:type" content="website"><meta property="og:image" content="https://nunmi.in/opengraph.jpg"><meta property="og:url" content="https://nunmi.in/blog/tool-and-tool-choice-with-azure/"><meta property="og:image:url" content="https://nunmi.in/opengraph.jpg"><meta property="og:image:alt" content="NuNmi.ai Homepage Screenshot"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@nunmi_ai"><meta name="twitter:creator" content="@nunmi_ai"><link rel="stylesheet" href="/_astro/about.BBmUqgs6.css"></head> <body> <div class="max-w-screen-xl mx-auto px-5">  <header class="flex flex-col lg:flex-row justify-between items-center my-5">  <div class="flex w-full lg:w-auto items-center justify-between"> <a href="/" class="text-lg"> <span class="font-bold text-slate-800">NuNmi</span><span class="text-slate-500">.ai</span> </a> <div class="block lg:hidden"> <button id="astronav-menu" aria-label="Toggle Menu">  <svg fill="currentColor" class="w-4 h-4 text-gray-800" width="24" height="24" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg"> <title>Toggle Menu</title> <path class="astronav-close-icon astronav-toggle hidden" fill-rule="evenodd" clip-rule="evenodd" d="M18.278 16.864a1 1 0 01-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 01-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 011.414-1.414l4.829 4.828 4.828-4.828a1 1 0 111.414 1.414l-4.828 4.829 4.828 4.828z"></path> <path class="astronav-open-icon astronav-toggle" fill-rule="evenodd" d="M4 5h16a1 1 0 010 2H4a1 1 0 110-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2z"></path> </svg>  </button> </div> </div> <nav class="astronav-items astronav-toggle hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">  <ul class="flex flex-col lg:flex-row lg:gap-3"> <li> <a href="/about" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> About</span>  </a> </li><li> <a href="/blog" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Blog</span>  </a> </li><li> <a href="/contact" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Contact</span>  </a> </li> </ul>   </nav>  <script>(function(){const closeOnClick = false;
+
+["DOMContentLoaded", "astro:after-swap"].forEach((event) => {
+  document.addEventListener(event, addListeners);
+});
+
+// Function to clone and replace elements
+function cloneAndReplace(element) {
+  const clone = element.cloneNode(true);
+  element.parentNode.replaceChild(clone, element);
+}
+
+function addListeners() {
+  // Clean up existing listeners
+  const oldMenuButton = document.getElementById("astronav-menu");
+  if (oldMenuButton) {
+    cloneAndReplace(oldMenuButton);
+  }
+
+  const oldDropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  oldDropdownMenus.forEach((menu) => {
+    cloneAndReplace(menu);
+  });
+
+  // Mobile nav toggle
+  const menuButton = document.getElementById("astronav-menu");
+  menuButton && menuButton.addEventListener("click", toggleMobileNav);
+
+  // Dropdown menus
+  const dropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  dropdownMenus.forEach((menu) => {
+    const button = menu.querySelector("button");
+    button &&
+      button.addEventListener("click", (event) =>
+        toggleDropdownMenu(event, menu, dropdownMenus)
+      );
+
+    // Handle Submenu Dropdowns
+    const dropDownSubmenus = menu.querySelectorAll(
+      ".astronav-dropdown-submenu"
+    );
+
+    dropDownSubmenus.forEach((submenu) => {
+      const submenuButton = submenu.querySelector("button");
+      submenuButton &&
+        submenuButton.addEventListener("click", (event) => {
+          event.stopImmediatePropagation();
+          toggleSubmenuDropdown(event, submenu);
+        });
+    });
+  });
+
+  // Clicking away from dropdown will remove the dropdown class
+  document.addEventListener("click", closeAllDropdowns);
+
+  if (closeOnClick) {
+    handleCloseOnClick();
+  }
+}
+
+function toggleMobileNav() {
+  [...document.querySelectorAll(".astronav-toggle")].forEach((el) => {
+    el.classList.toggle("hidden");
+  });
+}
+
+function toggleDropdownMenu(event, menu, dropdownMenus) {
+  toggleMenu(menu);
+
+  // Close one dropdown when selecting another
+  Array.from(dropdownMenus)
+    .filter((el) => el !== menu && !menu.contains(el))
+    .forEach(closeMenu);
+
+  event.stopPropagation();
+}
+
+function toggleSubmenuDropdown(event, submenu) {
+  event.stopPropagation();
+  toggleMenu(submenu);
+
+  // Close sibling submenus at the same nesting level
+  const siblingSubmenus = submenu
+    .closest(".astronav-dropdown")
+    .querySelectorAll(".astronav-dropdown-submenu");
+  Array.from(siblingSubmenus)
+    .filter((el) => el !== submenu && !submenu.contains(el))
+    .forEach(closeMenu);
+}
+
+function closeAllDropdowns(event) {
+  const dropdownMenus = document.querySelectorAll(".dropdown-toggle");
+  const dropdownParent = document.querySelectorAll(
+    ".astronav-dropdown, .astronav-dropdown-submenu"
+  );
+  const isButtonInsideDropdown = [
+    ...document.querySelectorAll(
+      ".astronav-dropdown button, .astronav-dropdown-submenu button, #astronav-menu"
+    ),
+  ].some((button) => button.contains(event.target));
+  if (!isButtonInsideDropdown) {
+    dropdownMenus.forEach((d) => {
+      // console.log("I ran", d);
+      // if (!d.contains(event.target)) {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.classList.add("hidden");
+      // }
+    });
+    dropdownParent.forEach((d) => {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.setAttribute("aria-expanded", "false");
+    });
+  }
+}
+
+function toggleMenu(menu) {
+  menu.classList.toggle("open");
+  const expanded = menu.getAttribute("aria-expanded") === "true";
+  menu.setAttribute("aria-expanded", expanded ? "false" : "true");
+  menu.hasAttribute("open")
+    ? menu.removeAttribute("open")
+    : menu.setAttribute("open", "");
+
+  const dropdownToggle = menu.querySelector(".dropdown-toggle");
+  const dropdownExpanded = dropdownToggle.getAttribute("aria-expanded");
+  dropdownToggle.classList.toggle("hidden");
+  dropdownToggle.setAttribute(
+    "aria-expanded",
+    dropdownExpanded === "true" ? "false" : "true"
+  );
+}
+
+function closeMenu(menu) {
+  // console.log("closing", menu);
+  menu.classList.remove("open");
+  menu.removeAttribute("open");
+  menu.setAttribute("aria-expanded", "false");
+  const dropdownToggles = menu.querySelectorAll(".dropdown-toggle");
+  dropdownToggles.forEach((toggle) => {
+    toggle.classList.add("hidden");
+    toggle.setAttribute("aria-expanded", "false");
+  });
+}
+
+function handleCloseOnClick() {
+  const navMenuItems = document.querySelector(".astronav-items");
+  const navToggle = document.getElementById("astronav-menu");
+  const navLink = navMenuItems && navMenuItems.querySelectorAll("a");
+
+  const MenuIcons = navToggle.querySelectorAll(".astronav-toggle");
+
+  navLink &&
+    navLink.forEach((item) => {
+      item.addEventListener("click", () => {
+        navMenuItems?.classList.add("hidden");
+        MenuIcons.forEach((el) => {
+          el.classList.toggle("hidden");
+        });
+      });
+    });
+}
+})();</script> <!-- <div>
+      <div class="hidden lg:flex items-center gap-4">
+        <Link href="/login">Log in</Link>
+        <Link href="/signup" size="md">Sign up</Link>
+      </div>
+    </div> --> </header>  </div>  <div class="max-w-screen-xl mx-auto px-5">  <div class="mx-auto max-w-3xl mt-14"> <span class="text-blue-400 uppercase tracking-wider text-sm font-medium"> Tutorials </span> <h1 class="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight"> Tools and Tool Choice with Azure </h1> <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap"> <!-- <span class="text-gray-400">{entry.data.author}</span> --> <!-- <span class="text-gray-400">•</span> --> <time class="text-gray-400" datetime="2024-06-12T18:30:00.000Z"> Thu Jun 13 2024 </time> <span class="text-gray-400 hidden md:block">•</span> <div class="w-full md:w-auto flex flex-wrap gap-3"> <span class="text-sm text-gray-500">#machinelearning</span><span class="text-sm text-gray-500">#probability</span><span class="text-sm text-gray-500">#statistics</span> </div> </div> </div> <div class="mx-auto prose prose-lg mt-6 max-w-3xl"> <p>When it comes to integrating GPT into our products and especially if a chain of logical decisions are made based on GPT’s result then we have to worry about the unstructured nature of GPT’s response.</p>
+<p>There are several ways to solve this issue</p>
+<ol>
+<li>Prompt Engineering - Emphasizing to return a structured output maybe as a JSON. This technique might work but sometimes the result could still be unstructured.</li>
+<li><strong>Langchain</strong>, <strong>Llamaindex</strong> and <strong>DSPy</strong> offer several functionalities to generate structured output and these techniques are usually robust but not native.</li>
+</ol>
+<p>In this blog we are going to see a native way to get structured output from GPT4 and the granularity of control is that each of the returned parameter’s data type could even be specified and obtained.</p>
+<h2 id="lets-look-at-an-example">Let’s look at an example …</h2>
+<p>We are going to ask GPT4 few problems to solve and the expected result should have</p>
+<ol>
+<li><strong>formula</strong> - formula used to solve the problem</li>
+<li><strong>substitution</strong> - substitute the values from the problem in the formula</li>
+<li><strong>result</strong> - final answer post substitution</li>
+<li><strong>explanation</strong> - a simple explanation on what the problem is and how to solve it</li>
+<li><strong>difficulty</strong> - on a scale of 1-10 how difficult is this problem for an engineering student</li>
+</ol>
+<p>So if we are not going to use any frameworks, few shot examples with properly defined output structure in prompt might help us get output in the desired format but natively we have something called <strong>tools</strong> and <strong>tool_choice</strong> to make the output structured. These features were released so that the output of GPT could be obtained as <strong>parameters</strong> and these parameters could be used to <strong>call a function</strong>.</p>
+<p><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/p559ctx3w8vpwfw8alf4.png" alt="Flow"></p>
+<h2 id="lets-look-at-some-code">Let’s look at some code</h2>
+<h3 id="installation">Installation</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>pip install openai</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="defining-the-output-structure-that-we-want">Defining the output structure that we want</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">tools </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"function"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "function"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"problem_solver"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Used to solve the problem"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                "parameters"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                    "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                        "formula"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                            "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"formula used to solve the problem"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                        },</span></span>
+<span class="line"><span style="color:#9ECBFF">                        "substitution"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                            "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"substitute the values present in the problem into the formula used to solve the problem"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                        },</span></span>
+<span class="line"><span style="color:#9ECBFF">                        "result"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                            "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"the final answer for the problem in float"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                        },</span></span>
+<span class="line"><span style="color:#9ECBFF">                        "explanation"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                            "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"explanation on how the problem is solved in simple words"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                        },</span></span>
+<span class="line"><span style="color:#9ECBFF">                        "difficulty"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"integer"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                            "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"on a scale of 1-10, how difficult is the problem to solve for an enginnering student"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                        },</span></span>
+<span class="line"><span style="color:#E1E4E8">                    },</span></span>
+<span class="line"><span style="color:#9ECBFF">                    "required"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"formula"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"substitution"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"result"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"explanation"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"difficulty"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"></span></code></pre>
+<ul>
+<li>
+<p>Name of the function is <strong>problem_solver</strong></p>
+</li>
+<li>
+<p>The 5 parameters that we want in the output are <strong>formula</strong>, <strong>substitution</strong>, <strong>result</strong>, <strong>explanation</strong>, <strong>difficulty</strong> which are defined inside <strong>parameters</strong> ==> <strong>properties</strong>.</p>
+</li>
+<li>
+<p>For each of the above parameters the <strong>type</strong>, <strong>description</strong> should be defined which specifies the <strong>data type</strong> of the returned value and <strong>simple description</strong> of what is to be returned.</p>
+</li>
+<li>
+<p>In the <strong>required</strong> key which is a list we have to specify the mandatory parameters that have to be returned otherwise GPT might consider it to be optional and might not return it.</p>
+</li>
+</ul>
+<h3 id="defining-a-function-which-is-used-to-call-azure-gpt-model">Defining a function which is used to call Azure GPT model</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> solve_problem</span><span style="color:#E1E4E8">(messages_list):</span></span>
+<span class="line"><span style="color:#E1E4E8">    api_key </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'your_api_key'</span></span>
+<span class="line"><span style="color:#E1E4E8">    api_base </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'your_api_base_url'</span></span>
+<span class="line"><span style="color:#E1E4E8">    api_version </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> '2024-02-01'</span></span>
+<span class="line"><span style="color:#E1E4E8">    model </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'your_deployment_name'</span></span>
+<span class="line"><span style="color:#E1E4E8">    client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> AzureOpenAI(</span></span>
+<span class="line"><span style="color:#FFAB70">        azure_endpoint</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> api_base,</span></span>
+<span class="line"><span style="color:#FFAB70">        api_key</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">api_key,</span></span>
+<span class="line"><span style="color:#FFAB70">        api_version</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">api_version</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.chat.completions.create(</span></span>
+<span class="line"><span style="color:#FFAB70">            model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model,</span></span>
+<span class="line"><span style="color:#FFAB70">            temperature</span><span style="color:#F97583">=</span><span style="color:#79B8FF">0.8</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            max_tokens</span><span style="color:#F97583">=</span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">messages_list,</span></span>
+<span class="line"><span style="color:#FFAB70">            tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">tools,</span></span>
+<span class="line"><span style="color:#FFAB70">            tool_choice</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"function"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"function"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"problem_solver"</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">    res</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> res</span></span>
+<span class="line"></span></code></pre>
+<ul>
+<li>
+<p>In the <strong>client.chat.completions.create</strong> we have two parameters <strong>tools</strong> and <strong>tool_choice</strong>, for the tools parameter we can pass the tools list we created before.</p>
+</li>
+<li>
+<p>The <strong>tool_choice</strong> parameter accepts three values</p>
+</li>
+</ul>
+<ol>
+<li>‘auto’ - This is the default value when we define parameters in the above step and pass it to tools. By specifying ‘auto’, we allow GPT to choose the function and parameters that we have defined in tools, sometimes GPT might not choose our defined function and parameters so there is a bit of uncertainty with ‘auto’.</li>
+<li>None - This is the default value when no function and parameters are defined. This is a way to specify not to use this feature.</li>
+<li>Specifying a particular function via <strong>{“type: “function”, “function”: {“name”: “my_function”}}</strong> forces the model to call that function. In our case this would be <strong>{“type: “function”, “function”: {“name”: “problem_solver”}}</strong>. This <strong>reinforces</strong> GPT to return the parameters defined under problem_solver.</li>
+</ol>
+<h3 id="lets-try-asking-few-questions">Let’s try asking few questions</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> solve_problem([{</span></span>
+<span class="line"><span style="color:#9ECBFF">    "role"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "content"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"An airplane accelerates down a runway at 3.20 m/s2 for 32.8 s until is finally lifts off the ground. Determine the distance traveled before takeoff"</span></span>
+<span class="line"><span style="color:#E1E4E8">}])</span></span>
+<span class="line"><span style="color:#E1E4E8">tool_calls </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> result.tool_calls</span></span>
+<span class="line"><span style="color:#E1E4E8">parameters </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> eval</span><span style="color:#E1E4E8">(tool_calls[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].function.arguments)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(parameters)</span></span>
+<span class="line"></span></code></pre>
+<h3 id="output">OUTPUT</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>{'formula': 'd = v_i * t + (1/2) * a * t^2',</span></span>
+<span class="line"><span> 'substitution': 'd = 0 * 32.8 + (1/2) * 3.20 * (32.8)^2',</span></span>
+<span class="line"><span> 'result': '1721.472 m',</span></span>
+<span class="line"><span> 'explanation': 'Since the airplane starts from rest, its initial velocity (v_i) is 0. The acceleration (a) is 3.20 m/s2 and the time (t) is 32.8 seconds. Using the kinematic equation for distance (d), where the first term is zero because the initial velocity is zero, the second term is (1/2) * acceleration * time squared gives the distance. After calculating, the distance comes out to be 1721.472 meters.',</span></span>
+<span class="line"><span> 'difficulty': 3}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>We can observe that the output is now a proper python dictionary which is easily parsable and could be used to call any function.
+Any if you want any more customization in the parameter data types refer to <a href="https://json-schema.org/understanding-json-schema/reference/type">https://json-schema.org/understanding-json-schema/reference/type</a>.</p>
+<p>We can define multiple functions and parameters in tools and let GPT decide which function and parameter to use based on prompt and description provided using ‘auto’ as tool_choice value or could enforce use of a particular function and its parameters by specifying it in tool_choice.</p>
+<p>Hope this helps :))</p> </div> <script id="mathjax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script> <div class="text-center mt-8"> <a href="/blog" class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition">← Back to Blog</a> </div>  </div>  <footer class="my-20"> <p class="text-center text-sm text-slate-500">
+Copyright © 2024 NuNmi.ai. All rights reserved.
+</p> <p class="text-center text-xs text-slate-500 mt-1">
+Designed and developed by <a href="https://nunmi.ai" target="_blank" rel="noopener" class="hover:underline">
+NuNmi.ai
+</a> </p> </footer>  </body> </html>

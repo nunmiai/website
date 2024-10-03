@@ -1,0 +1,233 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v4.12.2"><title>Bayes' Theorem In Layman Terms | NuNmi.ai</title><link rel="canonical" href="https://nunmi.in/blog/bayes-theorem-in-layman-terms/"><meta name="description" content="NuNmi.ai offers expert consulting and courses in machine learning and engineering."><meta name="robots" content="index, follow"><meta property="og:title" content="NuNmi.ai - Empowering Your Success"><meta property="og:type" content="website"><meta property="og:image" content="https://nunmi.in/opengraph.jpg"><meta property="og:url" content="https://nunmi.in/blog/bayes-theorem-in-layman-terms/"><meta property="og:image:url" content="https://nunmi.in/opengraph.jpg"><meta property="og:image:alt" content="NuNmi.ai Homepage Screenshot"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@nunmi_ai"><meta name="twitter:creator" content="@nunmi_ai"><link rel="stylesheet" href="/_astro/about.BBmUqgs6.css"></head> <body> <div class="max-w-screen-xl mx-auto px-5">  <header class="flex flex-col lg:flex-row justify-between items-center my-5">  <div class="flex w-full lg:w-auto items-center justify-between"> <a href="/" class="text-lg"> <span class="font-bold text-slate-800">NuNmi</span><span class="text-slate-500">.ai</span> </a> <div class="block lg:hidden"> <button id="astronav-menu" aria-label="Toggle Menu">  <svg fill="currentColor" class="w-4 h-4 text-gray-800" width="24" height="24" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg"> <title>Toggle Menu</title> <path class="astronav-close-icon astronav-toggle hidden" fill-rule="evenodd" clip-rule="evenodd" d="M18.278 16.864a1 1 0 01-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 01-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 011.414-1.414l4.829 4.828 4.828-4.828a1 1 0 111.414 1.414l-4.828 4.829 4.828 4.828z"></path> <path class="astronav-open-icon astronav-toggle" fill-rule="evenodd" d="M4 5h16a1 1 0 010 2H4a1 1 0 110-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2z"></path> </svg>  </button> </div> </div> <nav class="astronav-items astronav-toggle hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">  <ul class="flex flex-col lg:flex-row lg:gap-3"> <li> <a href="/about" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> About</span>  </a> </li><li> <a href="/blog" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Blog</span>  </a> </li><li> <a href="/contact" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Contact</span>  </a> </li> </ul>   </nav>  <script>(function(){const closeOnClick = false;
+
+["DOMContentLoaded", "astro:after-swap"].forEach((event) => {
+  document.addEventListener(event, addListeners);
+});
+
+// Function to clone and replace elements
+function cloneAndReplace(element) {
+  const clone = element.cloneNode(true);
+  element.parentNode.replaceChild(clone, element);
+}
+
+function addListeners() {
+  // Clean up existing listeners
+  const oldMenuButton = document.getElementById("astronav-menu");
+  if (oldMenuButton) {
+    cloneAndReplace(oldMenuButton);
+  }
+
+  const oldDropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  oldDropdownMenus.forEach((menu) => {
+    cloneAndReplace(menu);
+  });
+
+  // Mobile nav toggle
+  const menuButton = document.getElementById("astronav-menu");
+  menuButton && menuButton.addEventListener("click", toggleMobileNav);
+
+  // Dropdown menus
+  const dropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  dropdownMenus.forEach((menu) => {
+    const button = menu.querySelector("button");
+    button &&
+      button.addEventListener("click", (event) =>
+        toggleDropdownMenu(event, menu, dropdownMenus)
+      );
+
+    // Handle Submenu Dropdowns
+    const dropDownSubmenus = menu.querySelectorAll(
+      ".astronav-dropdown-submenu"
+    );
+
+    dropDownSubmenus.forEach((submenu) => {
+      const submenuButton = submenu.querySelector("button");
+      submenuButton &&
+        submenuButton.addEventListener("click", (event) => {
+          event.stopImmediatePropagation();
+          toggleSubmenuDropdown(event, submenu);
+        });
+    });
+  });
+
+  // Clicking away from dropdown will remove the dropdown class
+  document.addEventListener("click", closeAllDropdowns);
+
+  if (closeOnClick) {
+    handleCloseOnClick();
+  }
+}
+
+function toggleMobileNav() {
+  [...document.querySelectorAll(".astronav-toggle")].forEach((el) => {
+    el.classList.toggle("hidden");
+  });
+}
+
+function toggleDropdownMenu(event, menu, dropdownMenus) {
+  toggleMenu(menu);
+
+  // Close one dropdown when selecting another
+  Array.from(dropdownMenus)
+    .filter((el) => el !== menu && !menu.contains(el))
+    .forEach(closeMenu);
+
+  event.stopPropagation();
+}
+
+function toggleSubmenuDropdown(event, submenu) {
+  event.stopPropagation();
+  toggleMenu(submenu);
+
+  // Close sibling submenus at the same nesting level
+  const siblingSubmenus = submenu
+    .closest(".astronav-dropdown")
+    .querySelectorAll(".astronav-dropdown-submenu");
+  Array.from(siblingSubmenus)
+    .filter((el) => el !== submenu && !submenu.contains(el))
+    .forEach(closeMenu);
+}
+
+function closeAllDropdowns(event) {
+  const dropdownMenus = document.querySelectorAll(".dropdown-toggle");
+  const dropdownParent = document.querySelectorAll(
+    ".astronav-dropdown, .astronav-dropdown-submenu"
+  );
+  const isButtonInsideDropdown = [
+    ...document.querySelectorAll(
+      ".astronav-dropdown button, .astronav-dropdown-submenu button, #astronav-menu"
+    ),
+  ].some((button) => button.contains(event.target));
+  if (!isButtonInsideDropdown) {
+    dropdownMenus.forEach((d) => {
+      // console.log("I ran", d);
+      // if (!d.contains(event.target)) {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.classList.add("hidden");
+      // }
+    });
+    dropdownParent.forEach((d) => {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.setAttribute("aria-expanded", "false");
+    });
+  }
+}
+
+function toggleMenu(menu) {
+  menu.classList.toggle("open");
+  const expanded = menu.getAttribute("aria-expanded") === "true";
+  menu.setAttribute("aria-expanded", expanded ? "false" : "true");
+  menu.hasAttribute("open")
+    ? menu.removeAttribute("open")
+    : menu.setAttribute("open", "");
+
+  const dropdownToggle = menu.querySelector(".dropdown-toggle");
+  const dropdownExpanded = dropdownToggle.getAttribute("aria-expanded");
+  dropdownToggle.classList.toggle("hidden");
+  dropdownToggle.setAttribute(
+    "aria-expanded",
+    dropdownExpanded === "true" ? "false" : "true"
+  );
+}
+
+function closeMenu(menu) {
+  // console.log("closing", menu);
+  menu.classList.remove("open");
+  menu.removeAttribute("open");
+  menu.setAttribute("aria-expanded", "false");
+  const dropdownToggles = menu.querySelectorAll(".dropdown-toggle");
+  dropdownToggles.forEach((toggle) => {
+    toggle.classList.add("hidden");
+    toggle.setAttribute("aria-expanded", "false");
+  });
+}
+
+function handleCloseOnClick() {
+  const navMenuItems = document.querySelector(".astronav-items");
+  const navToggle = document.getElementById("astronav-menu");
+  const navLink = navMenuItems && navMenuItems.querySelectorAll("a");
+
+  const MenuIcons = navToggle.querySelectorAll(".astronav-toggle");
+
+  navLink &&
+    navLink.forEach((item) => {
+      item.addEventListener("click", () => {
+        navMenuItems?.classList.add("hidden");
+        MenuIcons.forEach((el) => {
+          el.classList.toggle("hidden");
+        });
+      });
+    });
+}
+})();</script> <!-- <div>
+      <div class="hidden lg:flex items-center gap-4">
+        <Link href="/login">Log in</Link>
+        <Link href="/signup" size="md">Sign up</Link>
+      </div>
+    </div> --> </header>  </div>  <div class="max-w-screen-xl mx-auto px-5">  <div class="mx-auto max-w-3xl mt-14"> <span class="text-blue-400 uppercase tracking-wider text-sm font-medium"> Concepts </span> <h1 class="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight"> Bayes&#39; Theorem In Layman Terms </h1> <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap"> <!-- <span class="text-gray-400">{entry.data.author}</span> --> <!-- <span class="text-gray-400">•</span> --> <time class="text-gray-400" datetime="2023-08-27T18:30:00.000Z"> Mon Aug 28 2023 </time> <span class="text-gray-400 hidden md:block">•</span> <div class="w-full md:w-auto flex flex-wrap gap-3"> <span class="text-sm text-gray-500">#machinelearning</span><span class="text-sm text-gray-500">#probability</span><span class="text-sm text-gray-500">#statistics</span> </div> </div> </div> <div class="mx-auto prose prose-lg mt-6 max-w-3xl"> <h2 id="definition">DEFINITION</h2>
+<p><em>Bayes’ Theorem states that the conditional probability of an event, based on the occurrence of another event, is equal to the likelihood of the second event given the first event multiplied by the probability of the first event.</em></p>
+<h4 id="blaa-blaa-blaa---i-find-definitions-to-be-strange-only-after-understanding-the-concept-i-do-understand-the-definition">Blaa Blaa Blaa - I find definitions to be strange, only after understanding the concept I do understand the definition.</h4>
+<h2 id="lets-break-it-down-and-understand-it-one-step-at-a-time">Let’s break it down and understand it one step at a time…</h2>
+<h2 id="marginal-probability---pa">Marginal Probability - P(A)</h2>
+<p>If a <a href="https://www.probabilitycourse.com/chapter3/3_1_4_independent_random_var.php">random variable is independent</a> then the probability of the event is irrespective of the outcomes of other random variables. In simple words, it’s like looking at the probability of something occurring without taking into account any other factors.</p>
+<h2 id="joint-probability---pab">Joint Probability - P(A,B)</h2>
+<p>The probability of 2 or more <strong>simultaneous</strong> events happening together. Eg Probability of watching TV and Eating.</p>
+<h2 id="conditional-probability---pab">Conditional Probability - P(A|B)</h2>
+<p>Probability of one (or more) event given the occurrence of another event. Eg the probability of your father having dessert given that tomorrow he is having a diabetes test is very low. If you notice carefully, if there is no diabetes test tomorrow, then the probability would have been almost 100%.</p>
+<h2 id="expressing-joint-probability-in-terms-of-conditional-probability">Expressing Joint Probability In Terms of Conditional Probability</h2>
+<p>$$
+P(A,B) = P(A|B) \cdot P(B)
+$$
+Note: <strong>P(A,B) = P(B,A)</strong> (Symmetrical)</p>
+<h2 id="expressing-conditional-probability-in-terms-of-joint-probability">Expressing Conditional Probability In Terms of Joint Probability</h2>
+<p>$$
+P(A|B) = \frac{P(A,B)}{P(B)}
+$$
+Note: <strong>P(A|B) \neq P(B|A)</strong> (Not Symmetrical)</p>
+<h2 id="finally-our-bayes-theorem-using-the-above-equations">Finally, our Bayes’ Theorem using the above equations</h2>
+<p>$$
+P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}
+$$
+The numerator <strong>P(B|A) \cdot P(A)</strong> is the <strong>joint probability</strong> equation given above.</p>
+<ul>
+<li>P(A|B) → <strong>Posterior Probability</strong></li>
+<li>P(B|A) → <strong>Likelihood</strong></li>
+<li>P(A)   → <strong>Prior Probability</strong></li>
+<li>P(B)   → <strong>Evidence</strong></li>
+</ul>
+<h3 id="example-probability-of-fire-given-smoke">Example: Probability of Fire Given Smoke</h3>
+<p>$$
+P(\text{Fire}|\text{Smoke}) = \frac{P(\text{Smoke}|\text{Fire}) \cdot P(\text{Fire})}{P(\text{Smoke})}
+$$</p>
+<ul>
+<li>P(Fire|Smoke) → <strong>Posterior Probability</strong></li>
+<li>P(Smoke|Fire) → <strong>Likelihood</strong></li>
+<li>P(Fire)       → <strong>Prior Probability</strong></li>
+<li>P(Smoke)      → <strong>Evidence</strong></li>
+</ul>
+<p>The probability of fire given that there is smoke is equal to the likelihood multiplied by the probability of fire divided by the probability of smoke. This is Bayes’ theorem.</p>
+<h2 id="bayes-theorem-application-in-medical-diagnosis">Bayes’ Theorem Application in Medical Diagnosis</h2>
+<p>Consider a diagnostic test determining whether a person has a malignant lesion.</p>
+<p>From observation, it is given that:
+$$
+P(\text{Test=Positive}|\text{Malignant=True}) = 0.85
+$$
+This means the probability of the test being positive given that the person has a malignant tumor is 85%.</p>
+<p>Now, using Bayes’ Theorem, we can calculate <strong>P(Malignant=True | Test=Positive)</strong>:
+$$
+P(\text{Malignant=True} | \text{Test=Positive}) = \frac{P(\text{Test=Positive}|\text{Malignant=True}) \cdot P(\text{Malignant=True})}{P(\text{Test=Positive})}
+$$
+Plugging in the known values:
+$$
+P(\text{Malignant=True | Test=Positive}) = \frac{0.85 \cdot 0.0002}{0.05016} = 0.003389
+$$
+This shows that despite a positive test, the probability of actually having a malignant tumor is only 0.33%.</p>
+<h2 id="conclusion">CONCLUSION</h2>
+<p>Bayes’ theorem is significant in statistics and widely used in machine learning. It provides a way to update prior probabilities with new information, adjusting our beliefs based on observed data.</p> </div> <script id="mathjax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script> <div class="text-center mt-8"> <a href="/blog" class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition">← Back to Blog</a> </div>  </div>  <footer class="my-20"> <p class="text-center text-sm text-slate-500">
+Copyright © 2024 NuNmi.ai. All rights reserved.
+</p> <p class="text-center text-xs text-slate-500 mt-1">
+Designed and developed by <a href="https://nunmi.ai" target="_blank" rel="noopener" class="hover:underline">
+NuNmi.ai
+</a> </p> </footer>  </body> </html>

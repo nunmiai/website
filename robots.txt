@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: http://nunmi.in/sitemap-index.xml

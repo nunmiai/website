@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v4.12.2"><title>Semantic Search in Layman Terms | NuNmi.ai</title><link rel="canonical" href="https://nunmi.in/blog/semantic-search-in-layman-terms/"><meta name="description" content="NuNmi.ai offers expert consulting and courses in machine learning and engineering."><meta name="robots" content="index, follow"><meta property="og:title" content="NuNmi.ai - Empowering Your Success"><meta property="og:type" content="website"><meta property="og:image" content="https://nunmi.in/opengraph.jpg"><meta property="og:url" content="https://nunmi.in/blog/semantic-search-in-layman-terms/"><meta property="og:image:url" content="https://nunmi.in/opengraph.jpg"><meta property="og:image:alt" content="NuNmi.ai Homepage Screenshot"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@nunmi_ai"><meta name="twitter:creator" content="@nunmi_ai"><link rel="stylesheet" href="/_astro/about.BBmUqgs6.css"></head> <body> <div class="max-w-screen-xl mx-auto px-5">  <header class="flex flex-col lg:flex-row justify-between items-center my-5">  <div class="flex w-full lg:w-auto items-center justify-between"> <a href="/" class="text-lg"> <span class="font-bold text-slate-800">NuNmi</span><span class="text-slate-500">.ai</span> </a> <div class="block lg:hidden"> <button id="astronav-menu" aria-label="Toggle Menu">  <svg fill="currentColor" class="w-4 h-4 text-gray-800" width="24" height="24" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg"> <title>Toggle Menu</title> <path class="astronav-close-icon astronav-toggle hidden" fill-rule="evenodd" clip-rule="evenodd" d="M18.278 16.864a1 1 0 01-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 01-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 011.414-1.414l4.829 4.828 4.828-4.828a1 1 0 111.414 1.414l-4.828 4.829 4.828 4.828z"></path> <path class="astronav-open-icon astronav-toggle" fill-rule="evenodd" d="M4 5h16a1 1 0 010 2H4a1 1 0 110-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2z"></path> </svg>  </button> </div> </div> <nav class="astronav-items astronav-toggle hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">  <ul class="flex flex-col lg:flex-row lg:gap-3"> <li> <a href="/about" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> About</span>  </a> </li><li> <a href="/blog" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Blog</span>  </a> </li><li> <a href="/contact" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Contact</span>  </a> </li> </ul>   </nav>  <script>(function(){const closeOnClick = false;
+
+["DOMContentLoaded", "astro:after-swap"].forEach((event) => {
+  document.addEventListener(event, addListeners);
+});
+
+// Function to clone and replace elements
+function cloneAndReplace(element) {
+  const clone = element.cloneNode(true);
+  element.parentNode.replaceChild(clone, element);
+}
+
+function addListeners() {
+  // Clean up existing listeners
+  const oldMenuButton = document.getElementById("astronav-menu");
+  if (oldMenuButton) {
+    cloneAndReplace(oldMenuButton);
+  }
+
+  const oldDropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  oldDropdownMenus.forEach((menu) => {
+    cloneAndReplace(menu);
+  });
+
+  // Mobile nav toggle
+  const menuButton = document.getElementById("astronav-menu");
+  menuButton && menuButton.addEventListener("click", toggleMobileNav);
+
+  // Dropdown menus
+  const dropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  dropdownMenus.forEach((menu) => {
+    const button = menu.querySelector("button");
+    button &&
+      button.addEventListener("click", (event) =>
+        toggleDropdownMenu(event, menu, dropdownMenus)
+      );
+
+    // Handle Submenu Dropdowns
+    const dropDownSubmenus = menu.querySelectorAll(
+      ".astronav-dropdown-submenu"
+    );
+
+    dropDownSubmenus.forEach((submenu) => {
+      const submenuButton = submenu.querySelector("button");
+      submenuButton &&
+        submenuButton.addEventListener("click", (event) => {
+          event.stopImmediatePropagation();
+          toggleSubmenuDropdown(event, submenu);
+        });
+    });
+  });
+
+  // Clicking away from dropdown will remove the dropdown class
+  document.addEventListener("click", closeAllDropdowns);
+
+  if (closeOnClick) {
+    handleCloseOnClick();
+  }
+}
+
+function toggleMobileNav() {
+  [...document.querySelectorAll(".astronav-toggle")].forEach((el) => {
+    el.classList.toggle("hidden");
+  });
+}
+
+function toggleDropdownMenu(event, menu, dropdownMenus) {
+  toggleMenu(menu);
+
+  // Close one dropdown when selecting another
+  Array.from(dropdownMenus)
+    .filter((el) => el !== menu && !menu.contains(el))
+    .forEach(closeMenu);
+
+  event.stopPropagation();
+}
+
+function toggleSubmenuDropdown(event, submenu) {
+  event.stopPropagation();
+  toggleMenu(submenu);
+
+  // Close sibling submenus at the same nesting level
+  const siblingSubmenus = submenu
+    .closest(".astronav-dropdown")
+    .querySelectorAll(".astronav-dropdown-submenu");
+  Array.from(siblingSubmenus)
+    .filter((el) => el !== submenu && !submenu.contains(el))
+    .forEach(closeMenu);
+}
+
+function closeAllDropdowns(event) {
+  const dropdownMenus = document.querySelectorAll(".dropdown-toggle");
+  const dropdownParent = document.querySelectorAll(
+    ".astronav-dropdown, .astronav-dropdown-submenu"
+  );
+  const isButtonInsideDropdown = [
+    ...document.querySelectorAll(
+      ".astronav-dropdown button, .astronav-dropdown-submenu button, #astronav-menu"
+    ),
+  ].some((button) => button.contains(event.target));
+  if (!isButtonInsideDropdown) {
+    dropdownMenus.forEach((d) => {
+      // console.log("I ran", d);
+      // if (!d.contains(event.target)) {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.classList.add("hidden");
+      // }
+    });
+    dropdownParent.forEach((d) => {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.setAttribute("aria-expanded", "false");
+    });
+  }
+}
+
+function toggleMenu(menu) {
+  menu.classList.toggle("open");
+  const expanded = menu.getAttribute("aria-expanded") === "true";
+  menu.setAttribute("aria-expanded", expanded ? "false" : "true");
+  menu.hasAttribute("open")
+    ? menu.removeAttribute("open")
+    : menu.setAttribute("open", "");
+
+  const dropdownToggle = menu.querySelector(".dropdown-toggle");
+  const dropdownExpanded = dropdownToggle.getAttribute("aria-expanded");
+  dropdownToggle.classList.toggle("hidden");
+  dropdownToggle.setAttribute(
+    "aria-expanded",
+    dropdownExpanded === "true" ? "false" : "true"
+  );
+}
+
+function closeMenu(menu) {
+  // console.log("closing", menu);
+  menu.classList.remove("open");
+  menu.removeAttribute("open");
+  menu.setAttribute("aria-expanded", "false");
+  const dropdownToggles = menu.querySelectorAll(".dropdown-toggle");
+  dropdownToggles.forEach((toggle) => {
+    toggle.classList.add("hidden");
+    toggle.setAttribute("aria-expanded", "false");
+  });
+}
+
+function handleCloseOnClick() {
+  const navMenuItems = document.querySelector(".astronav-items");
+  const navToggle = document.getElementById("astronav-menu");
+  const navLink = navMenuItems && navMenuItems.querySelectorAll("a");
+
+  const MenuIcons = navToggle.querySelectorAll(".astronav-toggle");
+
+  navLink &&
+    navLink.forEach((item) => {
+      item.addEventListener("click", () => {
+        navMenuItems?.classList.add("hidden");
+        MenuIcons.forEach((el) => {
+          el.classList.toggle("hidden");
+        });
+      });
+    });
+}
+})();</script> <!-- <div>
+      <div class="hidden lg:flex items-center gap-4">
+        <Link href="/login">Log in</Link>
+        <Link href="/signup" size="md">Sign up</Link>
+      </div>
+    </div> --> </header>  </div>  <div class="max-w-screen-xl mx-auto px-5">  <div class="mx-auto max-w-3xl mt-14"> <span class="text-blue-400 uppercase tracking-wider text-sm font-medium"> Concepts </span> <h1 class="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight"> Semantic Search in Layman Terms </h1> <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap"> <!-- <span class="text-gray-400">{entry.data.author}</span> --> <!-- <span class="text-gray-400">•</span> --> <time class="text-gray-400" datetime="2023-05-16T18:30:00.000Z"> Wed May 17 2023 </time> <span class="text-gray-400 hidden md:block">•</span> <div class="w-full md:w-auto flex flex-wrap gap-3"> <span class="text-sm text-gray-500">#machinelearning</span><span class="text-sm text-gray-500">#vectorsearch</span><span class="text-sm text-gray-500">#starter</span> </div> </div> </div> <div class="mx-auto prose prose-lg mt-6 max-w-3xl"> <p>If you are someone like me who is hearing about semantic search, vectors and embeddings after LLM(Large Language Model) was launched and finds these terms confusing then I hope this blog brings some clarity to you.</p>
+<h2 id="what-is-semantic-search">What is Semantic Search</h2>
+<p>Semantic search in Natural Language Processing (NLP) refers to the process of understanding the <strong>meaning</strong> or <strong>intent</strong> behind a user’s search query and retrieving relevant information based on that understanding. Unlike traditional keyword-based search, which matches queries to documents based on exact word matches, semantic search aims to comprehend the context and semantics of the query to generate more <strong>accurate</strong> and <strong>contextually relevant</strong> results.</p>
+<p>The next question is how to make computers understand the semantic information… Humans have very high cognitive capabilities so they can easily understand semantics in multiple languages but to make a computer understand semantics is challenging.</p>
+<p>In this blog, we are going to see how semantic information is understood using vectors/embeddings. In my previous blog, I have shown how <a href="https://dev.to/praveenr2998/countvectorizer-vs-tfidf-logistic-regression-3heb">CountVectorizer &#x26; TFIDF</a> works now we are going to see an even more advanced yet simple and easy way to do semantic search</p>
+<h1 id="what-is-a-vector">What is a vector</h1>
+<p>Mathematically a vector is a value which has both <strong>magnitude</strong> and <strong>direction</strong>.</p>
+<p><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/c4rpk97gswr4nj86x3iv.gif" alt="Single Dimensional Vector">
+Here vectors A,B,C,D have magnitudes 4, 2 and A,B,D have same direction but C has a different direction. These are <strong>single dimensional</strong> vectors.</p>
+<p><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/6pxa33reehkay8gch0y2.png" alt="Multi Dimensional Vector">
+In mathematics unlike in physics, there could be <strong>n</strong> dimensions for a vector and these are called <strong>multi-dimensional</strong> vectors(each arrow in the above figure is a dimension). The <strong>all-MiniLM-L6-v2</strong> model that we are going to use in this blog generates a vector with dimension <strong>384</strong>. The information stored in these dimensions is used to find semantic similarity.</p>
+<h1 id="sentence-transformers">Sentence Transformers</h1>
+<p>SentenceTransformers is a Python framework for state-of-the-art sentence, text and image embeddings. It provides easy methods to compute <strong>embeddings</strong> (dense vector representations) for sentences, paragraphs and images.</p>
+<p>Now we are going to see how to generate embeddings and do a semantic search using a pre-trained model from sentence transformers.</p>
+<h2 id="pretrained-sentence-transformer-model---all-minilm-l6-v2">Pretrained Sentence Transformer Model - all-MiniLM-L6-v2</h2>
+<p>We have a Python library to access the model</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">pip install </span><span style="color:#F97583">-</span><span style="color:#E1E4E8">U sentence</span><span style="color:#F97583">-</span><span style="color:#E1E4E8">transformers</span></span>
+<span class="line"></span></code></pre>
+<p>We are going to use the <strong>all-MiniLM-L6-v2</strong> model which is a lightweight yet powerful model.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> sentence_transformers </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> SentenceTransformer</span></span>
+<span class="line"><span style="color:#E1E4E8">model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> SentenceTransformer(</span><span style="color:#9ECBFF">'all-MiniLM-L6-v2'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<p>Now we can take a few question-answer sentences and generate embeddings from them and do a semantic search on them.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Q&#x26;A sentences</span></span>
+<span class="line"><span style="color:#E1E4E8">question_answers </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#9ECBFF">           "Q : What is this software used for? A : This software is used to handle you finances and provide useful suggestion"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">           "Q : How much does it cost per year? A : It costs 5000 rupees per year"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">           "Q : Is there a premium version available? A : Yes it is available for a cost of 7000 rupees per year"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">           "Q : Why should I choose this rather than product Y? A : Our product outperforms in W and Z"</span><span style="color:#E1E4E8">  </span></span>
+<span class="line"><span style="color:#E1E4E8">          ]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">#Sentences are encoded by calling model.encode()</span></span>
+<span class="line"><span style="color:#E1E4E8">question_answer_embeddings </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> model.encode(question_answers, </span><span style="color:#FFAB70">convert_to_tensor</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<p>The <strong>encode</strong> function will generate embeddings and further, we are converting the embeddings into a <strong>pytorch tensor</strong>.</p>
+<p><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/i42p41gsugrzvc5wx274.png" alt="Image description">
+That was easy !!!!</p>
+<p>Now we will ask a question and find semantically relevant content from the embeddings generated.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">question </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'Can you explain the use of this software'</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">question_embeddings </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> model.encode(question, </span><span style="color:#FFAB70">convert_to_tensor</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<p>We should also generate embedding for our question…</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> sentence_transformers.util </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> semantic_search</span></span>
+<span class="line"><span style="color:#E1E4E8">hits </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> semantic_search(question_embeddings, question_answer_embeddings, </span><span style="color:#FFAB70">top_k</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<p>We are using a utility function called <strong>semantic_search</strong> which internally uses <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a> by default to find the <strong>similarity</strong> between the two embeddings and returns a <strong>similarity score</strong>, you can also use any other metric for comparing the vectors like <strong>dot product</strong>.</p>
+<p><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/kyi9i0mrkwr9pe18evyv.png" alt="Hits"></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">([question_answers[hits[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">][i][</span><span style="color:#9ECBFF">'corpus_id'</span><span style="color:#E1E4E8">]] </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> range</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(hits[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]))])</span></span>
+<span class="line"></span></code></pre>
+<p><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/mwirzr7pzqbnha7bxtmd.png" alt="Image description"></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">question </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'How much do you charge?'</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">question_embeddings </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> model.encode(question, </span><span style="color:#FFAB70">convert_to_tensor</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> sentence_transformers.util </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> semantic_search</span></span>
+<span class="line"><span style="color:#E1E4E8">hits </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> semantic_search(question_embeddings, question_answer_embeddings, </span><span style="color:#FFAB70">top_k</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">([question_answers[hits[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">][i][</span><span style="color:#9ECBFF">'corpus_id'</span><span style="color:#E1E4E8">]] </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> range</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(hits[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]))])</span></span>
+<span class="line"></span></code></pre>
+<p><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/jokiicrxvkoy7x90sif9.png" alt="Image description"></p>
+<p>You could observe from the above examples that the question asked is not exactly matching to any input in question_answers but we are able to find the one that closely matches our input.</p>
+<p>There are many other models to generate even more powerful embeddings and the quality of embeddings is directly proportional to the semantic similarity.
+Happy Learning :))</p> </div> <script id="mathjax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script> <div class="text-center mt-8"> <a href="/blog" class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition">← Back to Blog</a> </div>  </div>  <footer class="my-20"> <p class="text-center text-sm text-slate-500">
+Copyright © 2024 NuNmi.ai. All rights reserved.
+</p> <p class="text-center text-xs text-slate-500 mt-1">
+Designed and developed by <a href="https://nunmi.ai" target="_blank" rel="noopener" class="hover:underline">
+NuNmi.ai
+</a> </p> </footer>  </body> </html>

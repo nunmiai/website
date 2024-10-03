@@ -1,0 +1,283 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v4.12.2"><title>My Embeddings Stay Close To Each Other, What About Yours? | NuNmi.ai</title><link rel="canonical" href="https://nunmi.in/blog/my-embeddings-stay-close-to-each-other/"><meta name="description" content="NuNmi.ai offers expert consulting and courses in machine learning and engineering."><meta name="robots" content="index, follow"><meta property="og:title" content="NuNmi.ai - Empowering Your Success"><meta property="og:type" content="website"><meta property="og:image" content="https://nunmi.in/opengraph.jpg"><meta property="og:url" content="https://nunmi.in/blog/my-embeddings-stay-close-to-each-other/"><meta property="og:image:url" content="https://nunmi.in/opengraph.jpg"><meta property="og:image:alt" content="NuNmi.ai Homepage Screenshot"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@nunmi_ai"><meta name="twitter:creator" content="@nunmi_ai"><link rel="stylesheet" href="/_astro/about.BBmUqgs6.css"></head> <body> <div class="max-w-screen-xl mx-auto px-5">  <header class="flex flex-col lg:flex-row justify-between items-center my-5">  <div class="flex w-full lg:w-auto items-center justify-between"> <a href="/" class="text-lg"> <span class="font-bold text-slate-800">NuNmi</span><span class="text-slate-500">.ai</span> </a> <div class="block lg:hidden"> <button id="astronav-menu" aria-label="Toggle Menu">  <svg fill="currentColor" class="w-4 h-4 text-gray-800" width="24" height="24" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg"> <title>Toggle Menu</title> <path class="astronav-close-icon astronav-toggle hidden" fill-rule="evenodd" clip-rule="evenodd" d="M18.278 16.864a1 1 0 01-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 01-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 011.414-1.414l4.829 4.828 4.828-4.828a1 1 0 111.414 1.414l-4.828 4.829 4.828 4.828z"></path> <path class="astronav-open-icon astronav-toggle" fill-rule="evenodd" d="M4 5h16a1 1 0 010 2H4a1 1 0 110-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2z"></path> </svg>  </button> </div> </div> <nav class="astronav-items astronav-toggle hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">  <ul class="flex flex-col lg:flex-row lg:gap-3"> <li> <a href="/about" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> About</span>  </a> </li><li> <a href="/blog" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Blog</span>  </a> </li><li> <a href="/contact" class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900"> <span> Contact</span>  </a> </li> </ul>   </nav>  <script>(function(){const closeOnClick = false;
+
+["DOMContentLoaded", "astro:after-swap"].forEach((event) => {
+  document.addEventListener(event, addListeners);
+});
+
+// Function to clone and replace elements
+function cloneAndReplace(element) {
+  const clone = element.cloneNode(true);
+  element.parentNode.replaceChild(clone, element);
+}
+
+function addListeners() {
+  // Clean up existing listeners
+  const oldMenuButton = document.getElementById("astronav-menu");
+  if (oldMenuButton) {
+    cloneAndReplace(oldMenuButton);
+  }
+
+  const oldDropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  oldDropdownMenus.forEach((menu) => {
+    cloneAndReplace(menu);
+  });
+
+  // Mobile nav toggle
+  const menuButton = document.getElementById("astronav-menu");
+  menuButton && menuButton.addEventListener("click", toggleMobileNav);
+
+  // Dropdown menus
+  const dropdownMenus = document.querySelectorAll(".astronav-dropdown");
+  dropdownMenus.forEach((menu) => {
+    const button = menu.querySelector("button");
+    button &&
+      button.addEventListener("click", (event) =>
+        toggleDropdownMenu(event, menu, dropdownMenus)
+      );
+
+    // Handle Submenu Dropdowns
+    const dropDownSubmenus = menu.querySelectorAll(
+      ".astronav-dropdown-submenu"
+    );
+
+    dropDownSubmenus.forEach((submenu) => {
+      const submenuButton = submenu.querySelector("button");
+      submenuButton &&
+        submenuButton.addEventListener("click", (event) => {
+          event.stopImmediatePropagation();
+          toggleSubmenuDropdown(event, submenu);
+        });
+    });
+  });
+
+  // Clicking away from dropdown will remove the dropdown class
+  document.addEventListener("click", closeAllDropdowns);
+
+  if (closeOnClick) {
+    handleCloseOnClick();
+  }
+}
+
+function toggleMobileNav() {
+  [...document.querySelectorAll(".astronav-toggle")].forEach((el) => {
+    el.classList.toggle("hidden");
+  });
+}
+
+function toggleDropdownMenu(event, menu, dropdownMenus) {
+  toggleMenu(menu);
+
+  // Close one dropdown when selecting another
+  Array.from(dropdownMenus)
+    .filter((el) => el !== menu && !menu.contains(el))
+    .forEach(closeMenu);
+
+  event.stopPropagation();
+}
+
+function toggleSubmenuDropdown(event, submenu) {
+  event.stopPropagation();
+  toggleMenu(submenu);
+
+  // Close sibling submenus at the same nesting level
+  const siblingSubmenus = submenu
+    .closest(".astronav-dropdown")
+    .querySelectorAll(".astronav-dropdown-submenu");
+  Array.from(siblingSubmenus)
+    .filter((el) => el !== submenu && !submenu.contains(el))
+    .forEach(closeMenu);
+}
+
+function closeAllDropdowns(event) {
+  const dropdownMenus = document.querySelectorAll(".dropdown-toggle");
+  const dropdownParent = document.querySelectorAll(
+    ".astronav-dropdown, .astronav-dropdown-submenu"
+  );
+  const isButtonInsideDropdown = [
+    ...document.querySelectorAll(
+      ".astronav-dropdown button, .astronav-dropdown-submenu button, #astronav-menu"
+    ),
+  ].some((button) => button.contains(event.target));
+  if (!isButtonInsideDropdown) {
+    dropdownMenus.forEach((d) => {
+      // console.log("I ran", d);
+      // if (!d.contains(event.target)) {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.classList.add("hidden");
+      // }
+    });
+    dropdownParent.forEach((d) => {
+      d.classList.remove("open");
+      d.removeAttribute("open");
+      d.setAttribute("aria-expanded", "false");
+    });
+  }
+}
+
+function toggleMenu(menu) {
+  menu.classList.toggle("open");
+  const expanded = menu.getAttribute("aria-expanded") === "true";
+  menu.setAttribute("aria-expanded", expanded ? "false" : "true");
+  menu.hasAttribute("open")
+    ? menu.removeAttribute("open")
+    : menu.setAttribute("open", "");
+
+  const dropdownToggle = menu.querySelector(".dropdown-toggle");
+  const dropdownExpanded = dropdownToggle.getAttribute("aria-expanded");
+  dropdownToggle.classList.toggle("hidden");
+  dropdownToggle.setAttribute(
+    "aria-expanded",
+    dropdownExpanded === "true" ? "false" : "true"
+  );
+}
+
+function closeMenu(menu) {
+  // console.log("closing", menu);
+  menu.classList.remove("open");
+  menu.removeAttribute("open");
+  menu.setAttribute("aria-expanded", "false");
+  const dropdownToggles = menu.querySelectorAll(".dropdown-toggle");
+  dropdownToggles.forEach((toggle) => {
+    toggle.classList.add("hidden");
+    toggle.setAttribute("aria-expanded", "false");
+  });
+}
+
+function handleCloseOnClick() {
+  const navMenuItems = document.querySelector(".astronav-items");
+  const navToggle = document.getElementById("astronav-menu");
+  const navLink = navMenuItems && navMenuItems.querySelectorAll("a");
+
+  const MenuIcons = navToggle.querySelectorAll(".astronav-toggle");
+
+  navLink &&
+    navLink.forEach((item) => {
+      item.addEventListener("click", () => {
+        navMenuItems?.classList.add("hidden");
+        MenuIcons.forEach((el) => {
+          el.classList.toggle("hidden");
+        });
+      });
+    });
+}
+})();</script> <!-- <div>
+      <div class="hidden lg:flex items-center gap-4">
+        <Link href="/login">Log in</Link>
+        <Link href="/signup" size="md">Sign up</Link>
+      </div>
+    </div> --> </header>  </div>  <div class="max-w-screen-xl mx-auto px-5">  <div class="mx-auto max-w-3xl mt-14"> <span class="text-blue-400 uppercase tracking-wider text-sm font-medium"> Concepts </span> <h1 class="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight"> My Embeddings Stay Close To Each Other, What About Yours? </h1> <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap"> <!-- <span class="text-gray-400">{entry.data.author}</span> --> <!-- <span class="text-gray-400">•</span> --> <time class="text-gray-400" datetime="2024-02-29T10:09:00.000Z"> Thu Feb 29 2024 </time> <span class="text-gray-400 hidden md:block">•</span> <div class="w-full md:w-auto flex flex-wrap gap-3"> <span class="text-sm text-gray-500">#machinelearning</span><span class="text-sm text-gray-500">#embeddings</span><span class="text-sm text-gray-500">#vectorsearch</span> </div> </div> </div> <div class="mx-auto prose prose-lg mt-6 max-w-3xl"> <p>This blog will help you generate embeddings for your datasets such that semantically related sentences stay close to each other in other words, this blog will help you fine-tune commonly available SBERT(Sentence BERT) models in <a href="https://huggingface.co/sentence-transformers">hugging face</a> using your dataset.</p>
+<h2 id="little-background-about-sbert">LITTLE BACKGROUND ABOUT SBERT</h2>
+<p>Sentence BERT was first introduced in the paper <a href="https://arxiv.org/abs/1908.10084">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</a>. In this paper, the authors have proposed a modification of the pre-trained BERT network that uses siamese and triplet network structures to derive semantically meaningful sentence embeddings that can be compared using cosine similarity.</p>
+<p>This blog is not about how SBERT works but rather how to finetune a pre-trained SBERT, so let’s go ahead.</p>
+<h2 id="why-finetune">WHY FINETUNE</h2>
+<p>Sometimes when you try to retrieve some information using any distance metric like cosine similarity the retriever might fetch unintended information, the reason being the unintended information is closer to your query in vector space.</p>
+<p><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/si7iv68kal9mq42nydkf.jpg" alt="2D SPACE">
+In the above image your question vector and irrelevant vector are close to each and why does this happen ???
+A few reasons might be</p>
+<ul>
+<li>
+<p>Wrong choice of embedding model - The model might be trained on a dataset from a different domain.</p>
+</li>
+<li>
+<p>The terms or words that you use might be unseen during model training</p>
+</li>
+</ul>
+<h2 id="so-whats-the-solution">SO WHAT’S THE SOLUTION</h2>
+<p>If you find that your use case has some unseen words or you have better datasets which you believe could make the model generate quality embeddings you could go for <strong>fine-tuning</strong>.</p>
+<h2 id="fine-tuning-sentence-bert-from-hugging-face">FINE-TUNING SENTENCE BERT FROM HUGGING FACE</h2>
+<p>We are going to use <a href="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2">all-MiniLM-L6-v2</a> model from <a href="https://huggingface.co/">hugging face</a>.</p>
+<h3 id="required-libraries">Required Libraries</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">pip3 install torch</span></span>
+<span class="line"><span style="color:#E1E4E8">pip3 install pandas</span></span>
+<span class="line"><span style="color:#E1E4E8">pip3 install </span><span style="color:#F97583">-</span><span style="color:#E1E4E8">U sentence</span><span style="color:#F97583">-</span><span style="color:#E1E4E8">transformers</span></span>
+<span class="line"></span></code></pre>
+<h3 id="little-bit-of-clarity">Little Bit Of Clarity</h3>
+<p>By finetuning we mean to ask the model to consider the pair of sentences that we send as training data points to be close to each other, there are several ways to <strong>organize</strong> your training data and a table explaining it is given below</p>
+<p><img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/rim6vaqca75wib2ukl70.png" alt="Table">
+<a href="https://huggingface.co/blog/how-to-train-sentence-transformers">image credits</a></p>
+<p>In this blog, we are going to use a <strong>pair of positive sentences without label</strong> for each training data point and the sentence pair denotes closely related sentences. The corresponding loss function would be <a href="https://www.sbert.net/docs/package_reference/losses.html#multiplenegativesrankingloss">MultipleNegativesRankingLoss</a></p>
+<h2 id="training">TRAINING</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> pandas </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> pd</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> sentence_transformers </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> SentenceTransformer</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> sentence_transformers </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> InputExample</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> sentence_transformers </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> losses</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> torch.utils.data </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> DataLoader</span></span>
+<span class="line"></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> trainSBERT</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> prepare_training_data</span><span style="color:#E1E4E8">(self, source_sentence_list, target_sentence_list):</span></span>
+<span class="line"><span style="color:#9ECBFF">        """</span></span>
+<span class="line"><span style="color:#9ECBFF">        Each training data point must have 2 two similar sentences inside a list</span></span>
+<span class="line"><span style="color:#9ECBFF">        Eg - [sentence 1, sentence 2]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">        INPUT</span></span>
+<span class="line"><span style="color:#9ECBFF">        source_sentence_list - List : All source sentences</span></span>
+<span class="line"><span style="color:#9ECBFF">        target_sentence_list - List : All target sentences</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">        RETURNS</span></span>
+<span class="line"><span style="color:#9ECBFF">        train_dataloader - Pytorch dataloader object</span></span>
+<span class="line"><span style="color:#9ECBFF">        """</span></span>
+<span class="line"><span style="color:#E1E4E8">        train_data_list </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> source, target </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> zip</span><span style="color:#E1E4E8">(source_sentence_list, target_sentence_list):</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(source, target)</span></span>
+<span class="line"><span style="color:#E1E4E8">            train_data_list.append(InputExample(</span><span style="color:#FFAB70">texts</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[source, target]))</span></span>
+<span class="line"><span style="color:#E1E4E8">       </span></span>
+<span class="line"><span style="color:#E1E4E8">        train_dataloader </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> DataLoader(train_data_list, </span><span style="color:#FFAB70">shuffle</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">batch_size</span><span style="color:#F97583">=</span><span style="color:#79B8FF">64</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> train_dataloader</span></span>
+<span class="line"><span style="color:#E1E4E8">   </span></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> train_sbert</span><span style="color:#E1E4E8">(self, model_name_list, n_epochs, source_sentence_list, target_sentence_list, path_to_save_model):</span></span>
+<span class="line"><span style="color:#9ECBFF">        """</span></span>
+<span class="line"><span style="color:#9ECBFF">        Used to train various sentence bert model</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">        INPUT</span></span>
+<span class="line"><span style="color:#9ECBFF">        model_name_list - List : List of model names from hugging face to be trained</span></span>
+<span class="line"><span style="color:#9ECBFF">        n_epochs - Int : Epochs to be trained for</span></span>
+<span class="line"><span style="color:#9ECBFF">        source_sentence_list - List : All source sentences</span></span>
+<span class="line"><span style="color:#9ECBFF">        target_sentence_list - List : All target sentences</span></span>
+<span class="line"><span style="color:#9ECBFF">        path_to_save_model - String : Path to save trained model</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">        RETURNS</span></span>
+<span class="line"><span style="color:#9ECBFF">        None</span></span>
+<span class="line"><span style="color:#9ECBFF">        """</span></span>
+<span class="line"><span style="color:#E1E4E8">        train_dataloader </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> self</span><span style="color:#E1E4E8">.prepare_training_data(source_sentence_list, target_sentence_list)</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> model_name </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> model_name_list:</span></span>
+<span class="line"><span style="color:#E1E4E8">            sbert_model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> SentenceTransformer(model_name)</span></span>
+<span class="line"><span style="color:#E1E4E8">           </span></span>
+<span class="line"><span style="color:#E1E4E8">            train_loss </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> losses.MultipleNegativesRankingLoss(</span><span style="color:#FFAB70">model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">sbert_model)</span></span>
+<span class="line"><span style="color:#E1E4E8">            warmup_steps </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> int</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(train_dataloader) </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> n_epochs </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 0.1</span><span style="color:#E1E4E8">) </span><span style="color:#6A737D">#10% of train data</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">            sbert_model.fit(</span><span style="color:#FFAB70">train_objectives</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[(train_dataloader, train_loss)],</span></span>
+<span class="line"><span style="color:#FFAB70">                    epochs</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">n_epochs,</span></span>
+<span class="line"><span style="color:#FFAB70">                    warmup_steps</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">warmup_steps)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">            os.makedirs(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">path_to_save_model</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">/</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">model_name.replace(</span><span style="color:#9ECBFF">'/'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'_'</span><span style="color:#E1E4E8">)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            sbert_model.save(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">path_to_save_model</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">/</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">model_name.replace(</span><span style="color:#9ECBFF">'/'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'_'</span><span style="color:#E1E4E8">)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<p>We are creating a class with 2 functions
+<strong><em>prepare_training_data</em></strong> - Used to convert training data into pytorch data loader format.
+<strong><em>train_sbert</em></strong> - Used to train sbert models and save them in your local directory.</p>
+<p>This is how your training data CSV file should look like
+<img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/9bizehtyfk0z5oob7017.png" alt="Training data"></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">df </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> pd.read_csv(</span><span style="color:#9ECBFF">'training_data.csv'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">obj </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> trainSBERT()</span></span>
+<span class="line"><span style="color:#E1E4E8">obj.train_sbert([</span><span style="color:#9ECBFF">'sentence-transformers/all-MiniLM-L6-v2'</span><span style="color:#E1E4E8">], </span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8">, df[</span><span style="color:#9ECBFF">'source_sentence'</span><span style="color:#E1E4E8">].tolist(), df[</span><span style="color:#9ECBFF">'target_sentence'</span><span style="color:#E1E4E8">].tolist(), </span><span style="color:#9ECBFF">"/Users/praveen/Desktop/praveen/github/training/model/sbert"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span></code></pre>
+<p>After 500 epochs the trained model will be saved to <strong>/Users/praveen/Desktop/praveen/github/training/model/sbert/sentence-transformers_all-MiniLM-L6-v2</strong></p>
+<p>All the below files will be saved to your local directory inside <strong>sentence-transformers_all-MiniLM-L6-v2</strong> folder
+<img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/udyqwrzvwk4gdro0ceat.png" alt="Files"></p>
+<h2 id="how-to-use-the-trained-model-to-generate-embeddings">HOW TO USE THE TRAINED MODEL TO GENERATE EMBEDDINGS</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> sentence_transformers </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> SentenceTransformer</span></span>
+<span class="line"><span style="color:#E1E4E8">model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> SentenceTransformer(</span><span style="color:#9ECBFF">'/Users/praveen/Desktop/praveen/github/training/model/sbert/sentence-transformers_all-MiniLM-L6-v2'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">question_embeddings </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> model.encode([question], </span><span style="color:#FFAB70">convert_to_tensor</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">answer_embeddings </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> model.encode([answer], </span><span style="color:#FFAB70">convert_to_tensor</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Question Embeddings : "</span><span style="color:#E1E4E8">, question_embeddings)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Answer Embeddings : "</span><span style="color:#E1E4E8">, answer_embeddings)</span></span>
+<span class="line"></span></code></pre>
+<p>Now you can compare these two using <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine-similarity</a> to calculate how close they are.</p>
+<p>Hope this helps :))</p> </div> <script id="mathjax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script> <div class="text-center mt-8"> <a href="/blog" class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition">← Back to Blog</a> </div>  </div>  <footer class="my-20"> <p class="text-center text-sm text-slate-500">
+Copyright © 2024 NuNmi.ai. All rights reserved.
+</p> <p class="text-center text-xs text-slate-500 mt-1">
+Designed and developed by <a href="https://nunmi.ai" target="_blank" rel="noopener" class="hover:underline">
+NuNmi.ai
+</a> </p> </footer>  </body> </html>
