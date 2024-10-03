@@ -1,6 +1,7 @@
 {
   "name": "astroship",
   "type": "module",
+  "homepage": "https://nunmiai.github.io/website",
   "version": "2.2.0",
   "private": true,
   "scripts": {
@@ -8,7 +9,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build" 
   },
   "dependencies": {
     "@astrojs/mdx": "^3.0.1",
@@ -27,5 +30,8 @@
     "react-katex": "^3.0.1",
     "sharp": "^0.33.4",
     "tailwindcss": "^3.4.3"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
   }
 }
