@@ -6,6 +6,10 @@ import icon from "astro-icon";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://nunmi.in/",
+  site: `https://www.nunmi.in/`,
+  output: 'static',
+  build: {
+    assets: 'astro'
+  },
   integrations: [tailwind(), mdx(), sitemap(), icon()],
 });

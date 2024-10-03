@@ -1,7 +1,7 @@
 {
   "name": "astroship",
   "type": "module",
-  "homepage": "https://nunmiai.github.io/website",
+  "homepage": "https://nunmi.in/",
   "version": "2.2.0",
   "private": true,
   "scripts": {
