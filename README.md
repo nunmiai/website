@@ -22,5 +22,8 @@ npm run dev
 The blogs that are displayed in the website are present in the `src/content/blog` directory.
 Add your blogs there in the markdown format (MDX is also supported). Make sure you update the header of the `.md` file with the right author, publish time, header image and everything.
 
-Once you are done adding your blogs and you are ready to publish, run `npm run deploy`
+Once you are done adding your blogs and you are ready to publish, run 
+```bash
+npm run deploy
+```
 This will automatically publish the blogs to the website.
